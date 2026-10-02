@@ -1157,31 +1157,62 @@
           .slice(-10);
       }
 
-      async function callAPI(payload) {
+      // Keep API calls from hanging forever. The stall experience should never
+      // leave a customer stuck on CHECKING... for more than a few seconds.
+      async function callAPI(payload, timeoutMs = 8000) {
         if (!API_URL || API_URL.includes("PASTE_YOUR_WEB_APP_EXEC_URL_HERE")) {
           throw new Error("API URL has not been added yet.");
         }
 
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8",
-          },
-          body: JSON.stringify(payload),
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-        if (!response.ok) {
-          throw new Error("API request failed (" + response.status + ")");
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+
+          if (!response.ok) {
+            throw new Error("API request failed (" + response.status + ")");
+          }
+
+          return await response.json();
+        } catch (error) {
+          if (error.name === "AbortError") {
+            throw new Error("The game server took too long to respond.");
+          }
+          throw error;
+        } finally {
+          clearTimeout(timeoutId);
         }
-
-        return await response.json();
       }
+
+      // Warm up Google Apps Script in the background while the customer is
+      // reading the first screen. This can reduce cold-start delay on the
+      // first real CHECK request. It does not affect game data.
+      function warmUpAPI() {
+        if (!API_URL || API_URL.includes("PASTE_YOUR_WEB_APP_EXEC_URL_HERE")) return;
+
+        fetch(API_URL, {
+          method: "GET",
+          cache: "no-store",
+        }).catch(() => {
+          // Warm-up is optional; the real API call will handle errors normally.
+        });
+      }
+
+      warmUpAPI();
 
       async function checkMobile(mobile) {
         return await callAPI({
           action: "check",
           mobile: mobile,
-        });
+        }, 8000);
       }
 
       async function submitGameResult(selectedBox) {
@@ -1190,7 +1221,7 @@
           name: playerName,
           mobile: playerMobile,
           selectedBox: selectedBox,
-        });
+        }, 8000);
       }
 
       function showFormError(message) {

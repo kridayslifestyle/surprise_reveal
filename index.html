@@ -54,6 +54,8 @@
       pointer-events: none;
       transform: translateY(14px);
       transition: 0.42s ease;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .screen.active {
@@ -72,6 +74,7 @@
       place-items: center;
       font-weight: 950;
       margin-bottom: 9px;
+      flex-shrink: 0;
     }
 
     .brand {
@@ -134,7 +137,7 @@
 
     .btn:disabled {
       opacity: 0.65;
-      cursor: not-allowed;
+      cursor: wait;
     }
 
     .bottom {
@@ -142,6 +145,7 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      padding-top: 15px;
     }
 
     .note {
@@ -151,9 +155,7 @@
       text-align: center;
     }
 
-    /* =========================================
-       HERO
-    ========================================= */
+    /* HERO */
 
     .hero {
       position: relative;
@@ -201,9 +203,7 @@
       background: #e1b04e;
     }
 
-    /* =========================================
-       FORM
-    ========================================= */
+    /* FORM */
 
     .card {
       width: 100%;
@@ -225,7 +225,8 @@
       margin-bottom: 7px;
     }
 
-    input {
+    input,
+    select {
       width: 100%;
       height: 51px;
       border: 1px solid #ddd4ca;
@@ -234,9 +235,12 @@
       font-size: 16px;
       margin-bottom: 14px;
       outline: none;
+      background: #fff;
+      color: #171515;
     }
 
-    input:focus {
+    input:focus,
+    select:focus {
       border-color: #a71935;
     }
 
@@ -255,9 +259,39 @@
       color: #655d56;
     }
 
-    /* =========================================
-       GAME
-    ========================================= */
+    .purchaseFields {
+      display: none;
+    }
+
+    .purchaseFields.show {
+      display: block;
+      animation: fieldAppear 0.3s ease;
+    }
+
+    @keyframes fieldAppear {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .typeHint {
+      margin: -5px 0 13px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: #faf6f0;
+      color: #8a8178;
+      font-size: 10px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    /* GAME */
 
     .gameTop {
       margin-top: 17px;
@@ -440,12 +474,6 @@
       transform: rotate(22deg);
     }
 
-    /*
-      IMPORTANT:
-      The tag only shows BOX 01 / BOX 02 / BOX 03 / BOX 04.
-      It NEVER shows the actual reward before selection.
-    */
-
     .tag {
       position: absolute;
       left: 0;
@@ -455,10 +483,6 @@
       font-weight: 950;
       letter-spacing: 1px;
     }
-
-    /* =========================================
-       SPEECH BUBBLES
-    ========================================= */
 
     .speech {
       position: absolute;
@@ -558,12 +582,9 @@
       color: #a71935;
     }
 
-    /* =========================================
-       SELECTED BOX
-    ========================================= */
-
     .boxBtn.selected {
-      animation: selectedWinner 0.9s cubic-bezier(0.15, 1.5, 0.3, 1) forwards !important;
+      animation: selectedWinner 0.9s cubic-bezier(0.15, 1.5, 0.3, 1)
+        forwards !important;
       z-index: 10;
     }
 
@@ -630,16 +651,58 @@
     }
 
     .boxBtn.selected .speech::after {
-      content: "";
+      background: #a71935;
     }
 
     .boxBtn.selected .tag {
       color: #a71935;
     }
 
-    /* =========================================
-       SUSPENSE
-    ========================================= */
+    /* BOX RESULT PREVIEW */
+
+    .boxDiscount {
+      position: absolute;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%);
+      z-index: 30;
+      font-size: 13px;
+      font-weight: 950;
+      color: white;
+      background: #181616;
+      padding: 5px 9px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: 0.25s;
+      pointer-events: none;
+    }
+
+    .boxesReady .boxDiscount {
+      opacity: 1;
+    }
+
+    .visitorLoseLabel {
+      position: absolute;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%);
+      z-index: 30;
+      font-size: 10px;
+      font-weight: 950;
+      color: white;
+      background: #181616;
+      padding: 5px 8px;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .boxesReady.visitorMode .visitorLoseLabel {
+      opacity: 1;
+    }
+
+    /* SUSPENSE */
 
     .suspenseBox {
       width: 100%;
@@ -737,9 +800,7 @@
       }
     }
 
-    /* =========================================
-       REWARD
-    ========================================= */
+    /* REWARD */
 
     .loseReward {
       display: none;
@@ -810,16 +871,19 @@
       letter-spacing: 2px;
     }
 
-    /* =========================================
-       CONFETTI
-    ========================================= */
+    .resultDetail {
+      margin-top: 10px;
+      color: #777;
+      font-size: 11px;
+      line-height: 1.5;
+    }
 
     .confetti {
       position: absolute;
       inset: 0;
       pointer-events: none;
       overflow: hidden;
-      z-index: 500;
+      z-index: 900;
     }
 
     .confetti i {
@@ -837,9 +901,7 @@
       }
     }
 
-    /* =========================================
-       MESSAGE MODAL
-    ========================================= */
+    /* MESSAGE MODAL */
 
     .messageModal {
       position: absolute;
@@ -928,10 +990,6 @@
       cursor: pointer;
     }
 
-    .messageModalBtn:active {
-      transform: scale(0.98);
-    }
-
     @media (max-width: 350px) {
       .speech {
         font-size: 11px;
@@ -943,6 +1001,14 @@
         font-size: 13px;
         min-width: 128px;
       }
+
+      .boxBtn {
+        height: 175px;
+      }
+
+      .present {
+        transform: translateX(-50%) scale(0.9);
+      }
     }
   </style>
 </head>
@@ -951,48 +1017,24 @@
 
 <div class="app">
 
-  <!-- =========================================
-       MESSAGE MODAL
-  ========================================== -->
+  <!-- MESSAGE MODAL -->
+  <div class="messageModal" id="messageModal" aria-hidden="true">
+    <div class="messageModalCard" role="dialog" aria-modal="true">
 
-  <div
-    class="messageModal"
-    id="messageModal"
-    aria-hidden="true"
-  >
-    <div
-      class="messageModalCard"
-      role="dialog"
-      aria-modal="true"
-    >
-
-      <div
-        class="messageModalIcon"
-        id="messageModalIcon"
-      >
+      <div class="messageModalIcon" id="messageModalIcon">
         😅
       </div>
 
-      <div
-        class="messageModalEyebrow"
-        id="messageModalEyebrow"
-      >
-        ALREADY PLAYED
+      <div class="messageModalEyebrow" id="messageModalEyebrow">
+        NOTICE
       </div>
 
-      <div
-        class="messageModalTitle"
-        id="messageModalTitle"
-      >
-        Hey Buddy! 😅
+      <div class="messageModalTitle" id="messageModalTitle">
+        Hey Buddy!
       </div>
 
-      <div
-        class="messageModalText"
-        id="messageModalText"
-      >
-        Your chance has already been used.<br />
-        Better luck next time! 🍀
+      <div class="messageModalText" id="messageModalText">
+        Something happened.
       </div>
 
       <button
@@ -1007,10 +1049,7 @@
   </div>
 
 
-  <!-- =========================================
-       SCREEN 1
-  ========================================== -->
-
+  <!-- SCREEN 1 -->
   <section class="screen active" id="s1">
 
     <div class="logo">K</div>
@@ -1029,7 +1068,7 @@
     </div>
 
     <h1>
-      🎁 Let's Play<br />
+      🎁 Let's Play<br>
       for a Surprise!
     </h1>
 
@@ -1038,11 +1077,7 @@
     </div>
 
     <div class="bottom">
-      <button
-        class="btn red"
-        id="startBtn"
-        type="button"
-      >
+      <button class="btn red" id="startBtn">
         LET'S PLAY 😎
       </button>
     </div>
@@ -1054,10 +1089,7 @@
   </section>
 
 
-  <!-- =========================================
-       SCREEN 2
-  ========================================== -->
-
+  <!-- SCREEN 2 -->
   <section class="screen" id="s2">
 
     <div class="logo">K</div>
@@ -1071,19 +1103,19 @@
     </div>
 
     <h2>
-      Just two things.<br />
+      Just a few things.<br>
       <span style="color:#a71935">
         Your surprise is waiting! 🎁
       </span>
     </h2>
 
     <div class="sub">
-      Enter your name and mobile number to continue.
+      Enter your details to continue.
     </div>
 
     <form class="card" id="form">
 
-      <label>
+      <label for="name">
         NAME
       </label>
 
@@ -1094,7 +1126,8 @@
         autocomplete="name"
       />
 
-      <label>
+
+      <label for="phone">
         MOBILE NUMBER
       </label>
 
@@ -1107,16 +1140,81 @@
         placeholder="10-digit number"
       />
 
-      <div class="privacy-note">
-        🔒
-        <strong>Your details are safe with us.</strong>
-        <br />
-        We won't sell or share your information. It will only be used for the
-        Kriday's Lifestyle experience and relevant marketing communication.
+
+      <label for="customerType">
+        YOU ARE HERE AS
+      </label>
+
+      <select
+        id="customerType"
+        required
+      >
+        <option value="">
+          Select one
+        </option>
+
+        <option value="VISITOR">
+          Visitor
+        </option>
+
+        <option value="PURCHASED">
+          Purchased
+        </option>
+      </select>
+
+
+      <!-- PURCHASE FIELDS -->
+
+      <div
+        class="purchaseFields"
+        id="purchaseFields"
+      >
+
+        <div class="typeHint">
+          Enter your purchase amount and the purchase token
+          given to you at the stall.
+        </div>
+
+        <label for="purchaseValue">
+          PURCHASE VALUE
+        </label>
+
+        <input
+          id="purchaseValue"
+          type="number"
+          min="1"
+          step="1"
+          inputmode="numeric"
+          placeholder="Example: 1800"
+        />
+
+
+        <label for="purchaseToken">
+          PURCHASE TOKEN
+        </label>
+
+        <input
+          id="purchaseToken"
+          type="text"
+          maxlength="10"
+          autocomplete="off"
+          placeholder="Enter your token"
+        />
+
       </div>
+
+
+      <div class="privacy-note">
+        🔒 <strong>Your details are safe with us.</strong><br>
+        We won't sell or share your information. It will only be
+        used for the Kriday's Lifestyle experience and relevant
+        marketing communication.
+      </div>
+
 
       <button
         class="btn red"
+        id="submitButton"
         type="submit"
       >
         SHOW ME MY SURPRISE 🎁
@@ -1127,10 +1225,7 @@
   </section>
 
 
-  <!-- =========================================
-       SCREEN 3 — MYSTERY BOXES
-  ========================================== -->
-
+  <!-- SCREEN 3 -->
   <section class="screen" id="s3">
 
     <div class="logo">K</div>
@@ -1139,17 +1234,18 @@
       KRIDAY'S LIFESTYLE
     </div>
 
-    <div class="eyebrow">
-      VISITOR SURPRISE 👀
+    <div class="eyebrow" id="gameEyebrow">
+      UH-OH… TOO MANY CHOICES 😜
     </div>
 
     <h2>
       Which one is lucky?
     </h2>
 
-    <div class="sub">
+    <div class="sub" id="gameSub">
       Don't ask us. We don't know either. 😂
     </div>
+
 
     <div class="gameTop">
 
@@ -1163,26 +1259,15 @@
     </div>
 
 
-    <!--
-      IMPORTANT:
-      NONE of these boxes contain:
-      ❌ Better Luck
-      ❌ 5% OFF
-      ❌ 10% OFF
-      ❌ 20% OFF
-
-      Only the box number is visible.
-      The actual result comes from the server after selection.
-    -->
-
-    <div class="boxGrid">
+    <div
+      class="boxGrid"
+      id="boxGrid"
+    >
 
       <!-- BOX 1 -->
-
       <button
         class="boxBtn"
         data-box="1"
-        type="button"
       >
 
         <span class="speech">
@@ -1201,6 +1286,12 @@
 
         </div>
 
+        <span class="boxDiscount"></span>
+
+        <span class="visitorLoseLabel">
+          BETTER LUCK
+        </span>
+
         <span class="tag">
           BOX 01
         </span>
@@ -1209,11 +1300,9 @@
 
 
       <!-- BOX 2 -->
-
       <button
         class="boxBtn"
         data-box="2"
-        type="button"
       >
 
         <span class="speech">
@@ -1232,6 +1321,12 @@
 
         </div>
 
+        <span class="boxDiscount"></span>
+
+        <span class="visitorLoseLabel">
+          BETTER LUCK
+        </span>
+
         <span class="tag">
           BOX 02
         </span>
@@ -1240,11 +1335,9 @@
 
 
       <!-- BOX 3 -->
-
       <button
         class="boxBtn"
         data-box="3"
-        type="button"
       >
 
         <span class="speech">
@@ -1263,6 +1356,12 @@
 
         </div>
 
+        <span class="boxDiscount"></span>
+
+        <span class="visitorLoseLabel">
+          BETTER LUCK
+        </span>
+
         <span class="tag">
           BOX 03
         </span>
@@ -1271,11 +1370,9 @@
 
 
       <!-- BOX 4 -->
-
       <button
         class="boxBtn"
         data-box="4"
-        type="button"
       >
 
         <span class="speech">
@@ -1294,6 +1391,12 @@
 
         </div>
 
+        <span class="boxDiscount"></span>
+
+        <span class="visitorLoseLabel">
+          BETTER LUCK
+        </span>
+
         <span class="tag">
           BOX 04
         </span>
@@ -1307,17 +1410,17 @@
       Tap one. No changing your mind. 😜
     </div>
 
-    <div class="luckyNote">
+    <div
+      class="luckyNote"
+      id="luckyNote"
+    >
       Your box = your surprise
     </div>
 
   </section>
 
 
-  <!-- =========================================
-       SCREEN 4 — SUSPENSE
-  ========================================== -->
-
+  <!-- SCREEN 4 -->
   <section class="screen" id="s4">
 
     <div class="logo">K</div>
@@ -1329,6 +1432,7 @@
     <div class="eyebrow">
       WAIT… LET'S SEE 👀
     </div>
+
 
     <div
       class="suspenseBox"
@@ -1362,12 +1466,14 @@
         You picked Box 01…
       </div>
 
+
       <div
         class="count"
         id="count"
       >
         3
       </div>
+
 
       <div
         class="thinking"
@@ -1384,7 +1490,6 @@
       <button
         class="btn"
         id="skipBtn"
-        type="button"
       >
         OPEN IT! 😂
       </button>
@@ -1394,10 +1499,7 @@
   </section>
 
 
-  <!-- =========================================
-       SCREEN 5 — RESULT
-  ========================================== -->
-
+  <!-- SCREEN 5 -->
   <section class="screen" id="s5">
 
     <div class="logo">K</div>
@@ -1426,7 +1528,7 @@
         class="discount"
         id="discount"
       >
-        5%
+        17%
       </div>
 
       <div class="off">
@@ -1437,18 +1539,27 @@
         class="sub"
         style="margin:10px auto 0"
       >
-        Your mystery box had a little something waiting for you. 😎
+        Your mystery box had a little something waiting
+        for you. 😎
       </div>
 
       <div
         class="coupon"
         id="coupon"
       >
-        KRIDAY5XXXX
+        KRIDAY17X
+      </div>
+
+      <div
+        class="resultDetail"
+        id="resultDetail"
+      >
+        Show this screen to the Kriday's Lifestyle team
+        at the stall.
       </div>
 
       <div class="note">
-        Show this screen to the Kriday's Lifestyle team at the stall.
+        Your discount is valid for this purchase.
       </div>
 
     </div>
@@ -1477,7 +1588,8 @@
         class="sub"
         style="margin:0 auto"
       >
-        This time the surprise wasn't yours — but thanks for playing with us! ❤️
+        This time the surprise wasn't yours —
+        but thanks for playing with us! ❤️
       </div>
 
       <div class="loseSticker">
@@ -1496,7 +1608,6 @@
       <button
         class="btn red"
         id="doneBtn"
-        type="button"
       >
         DONE ❤️
       </button>
@@ -1505,8 +1616,6 @@
 
   </section>
 
-
-  <!-- CONFETTI -->
 
   <div
     class="confetti"
@@ -1518,823 +1627,837 @@
 
 <script>
 
-/* ============================================================
-   GOOGLE APPS SCRIPT API
-   ============================================================ */
+  /*
+   * ============================================================
+   * GOOGLE APPS SCRIPT URL
+   * ============================================================
+   */
 
-const API_URL =
-  "https://script.google.com/macros/s/AKfycbyckCe1yrtVeS0PJbkUWg8JgelkKxgzECslmJ6xZ6Th66V-1aVOx2OCulWDWeh8fG-W/exec";
-
-
-/* ============================================================
-   SCREEN CONTROL
-   ============================================================ */
-
-const screens = [
-  "s1",
-  "s2",
-  "s3",
-  "s4",
-  "s5"
-];
-
-function show(id) {
-
-  screens.forEach((screenId) => {
-
-    const element = document.getElementById(screenId);
-
-    if (element) {
-      element.classList.toggle(
-        "active",
-        screenId === id
-      );
-    }
-
-  });
-
-}
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbyckCe1yrtVeS0PJbkUWg8JgelkKxgzECslmJ6xZ6Th66V-1aVOx2OCulWDWeh8fG-W/exec";
 
 
-/* ============================================================
-   MESSAGE MODAL
-   ============================================================ */
+  /*
+   * ============================================================
+   * SCREEN MANAGEMENT
+   * ============================================================
+   */
 
-function showMessageModal(
-  title,
-  message,
-  icon = "😅",
-  eyebrow = "ALREADY PLAYED"
-) {
-
-  document.getElementById(
-    "messageModalIcon"
-  ).textContent = icon;
-
-  document.getElementById(
-    "messageModalEyebrow"
-  ).textContent = eyebrow;
-
-  document.getElementById(
-    "messageModalTitle"
-  ).textContent = title;
-
-  document.getElementById(
-    "messageModalText"
-  ).innerHTML = message;
-
-  const modal =
-    document.getElementById("messageModal");
-
-  modal.classList.add("show");
-
-  modal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-}
+  const screens = [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5"
+  ];
 
 
-function closeMessageModal() {
+  function show(id) {
 
-  const modal =
-    document.getElementById("messageModal");
+    screens.forEach((screenId) => {
 
-  modal.classList.remove("show");
+      document
+        .getElementById(screenId)
+        .classList
+        .toggle(
+          "active",
+          screenId === id
+        );
 
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
+    });
 
-}
-
-
-document
-  .getElementById("messageModalBtn")
-  .addEventListener(
-    "click",
-    closeMessageModal
-  );
+  }
 
 
-document
-  .getElementById("messageModal")
-  .addEventListener(
-    "click",
-    function(event) {
+  /*
+   * ============================================================
+   * MODAL
+   * ============================================================
+   */
 
-      if (
-        event.target.id === "messageModal"
-      ) {
-        closeMessageModal();
-      }
-
-    }
-  );
-
-
-/* ============================================================
-   GLOBAL GAME VARIABLES
-   ============================================================ */
-
-let playerName = "";
-let playerMobile = "";
-
-let chosen = 1;
-
-let opening = false;
-
-let gameResult = null;
-
-let suspenseTimer = null;
-
-let apiBusy = false;
-
-
-/* ============================================================
-   MOBILE NORMALIZATION
-   ============================================================ */
-
-function normalizeMobile(value) {
-
-  return String(value || "")
-    .replace(/\D/g, "")
-    .slice(-10);
-
-}
-
-
-/* ============================================================
-   API CALL
-   ============================================================ */
-
-async function callAPI(
-  payload,
-  timeoutMs = 20000
-) {
-
-  if (
-    !API_URL ||
-    API_URL.includes(
-      "PASTE_YOUR_WEB_APP_EXEC_URL_HERE"
-    )
+  function showMessageModal(
+    title,
+    message,
+    icon = "😅",
+    eyebrow = "NOTICE"
   ) {
 
-    throw new Error(
-      "API URL has not been added yet."
+    document
+      .getElementById("messageModalIcon")
+      .textContent = icon;
+
+
+    document
+      .getElementById("messageModalEyebrow")
+      .textContent = eyebrow;
+
+
+    document
+      .getElementById("messageModalTitle")
+      .textContent = title;
+
+
+    document
+      .getElementById("messageModalText")
+      .innerHTML = message;
+
+
+    const modal =
+      document.getElementById(
+        "messageModal"
+      );
+
+
+    modal.classList.add("show");
+
+    modal.setAttribute(
+      "aria-hidden",
+      "false"
     );
 
   }
 
 
-  const controller =
-    new AbortController();
+  function closeMessageModal() {
 
-  const timeoutId =
-    setTimeout(
-      () => controller.abort(),
-      timeoutMs
+    const modal =
+      document.getElementById(
+        "messageModal"
+      );
+
+
+    modal.classList.remove("show");
+
+    modal.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+  }
+
+
+  document
+    .getElementById("messageModalBtn")
+    .addEventListener(
+      "click",
+      closeMessageModal
     );
 
 
-  try {
+  document
+    .getElementById("messageModal")
+    .addEventListener(
+      "click",
+      function(event) {
 
-    const response =
-      await fetch(
-        API_URL,
-        {
-          method: "POST",
+        if (
+          event.target.id ===
+          "messageModal"
+        ) {
 
-          headers: {
-            "Content-Type":
-              "text/plain;charset=utf-8"
-          },
+          closeMessageModal();
 
-          body:
-            JSON.stringify(payload),
-
-          signal:
-            controller.signal
         }
-      );
+
+      }
+    );
 
 
-    if (!response.ok) {
+  /*
+   * ============================================================
+   * VARIABLES
+   * ============================================================
+   */
 
-      throw new Error(
-        "API request failed (" +
-        response.status +
-        ")"
-      );
+  let playerName = "";
 
-    }
+  let playerMobile = "";
 
+  let customerType = "";
 
-    const text =
-      await response.text();
+  let purchaseValue = "";
 
+  let purchaseToken = "";
 
-    let result;
+  let chosen = 1;
 
-    try {
+  let opening = false;
 
-      result =
-        JSON.parse(text);
+  let apiBusy = false;
 
-    } catch (jsonError) {
+  let gameResult = null;
 
-      console.error(
-        "Invalid JSON from API:",
-        text
-      );
-
-      throw new Error(
-        "The game server returned an invalid response."
-      );
-
-    }
+  let suspenseTimer = null;
 
 
-    return result;
+  /*
+   * ============================================================
+   * START
+   * ============================================================
+   */
 
-  } catch (error) {
+  document
+    .getElementById("startBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        show("s2");
+
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * CUSTOMER TYPE
+   * ============================================================
+   */
+
+  const customerTypeSelect =
+    document.getElementById(
+      "customerType"
+    );
+
+
+  const purchaseFields =
+    document.getElementById(
+      "purchaseFields"
+    );
+
+
+  customerTypeSelect
+    .addEventListener(
+      "change",
+      function() {
+
+        const value =
+          this.value;
+
+
+        if (
+          value === "PURCHASED"
+        ) {
+
+          purchaseFields
+            .classList
+            .add("show");
+
+        } else {
+
+          purchaseFields
+            .classList
+            .remove("show");
+
+
+          document
+            .getElementById(
+              "purchaseValue"
+            )
+            .value = "";
+
+
+          document
+            .getElementById(
+              "purchaseToken"
+            )
+            .value = "";
+
+        }
+
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * MOBILE NORMALIZATION
+   * ============================================================
+   */
+
+  function normalizeMobile(value) {
+
+    return String(value || "")
+      .replace(/\D/g, "")
+      .slice(-10);
+
+  }
+
+
+  /*
+   * ============================================================
+   * API CALL
+   * ============================================================
+   */
+
+  async function callAPI(
+    payload,
+    timeoutMs = 8000
+  ) {
 
     if (
-      error.name ===
-      "AbortError"
+      !API_URL ||
+      API_URL.includes(
+        "PASTE_YOUR_WEB_APP"
+      )
     ) {
 
       throw new Error(
-        "The game server took too long to respond."
+        "API URL has not been configured."
       );
 
     }
 
-    throw error;
 
-  } finally {
-
-    clearTimeout(timeoutId);
-
-  }
-
-}
+    const controller =
+      new AbortController();
 
 
-/* ============================================================
-   API WARM-UP
-   ============================================================ */
-
-function warmUpAPI() {
-
-  if (!API_URL) return;
-
-  fetch(
-    API_URL,
-    {
-      method: "GET",
-      cache: "no-store"
-    }
-  ).catch(() => {
-
-    /*
-      Warm-up is optional.
-      Real API requests handle errors.
-    */
-
-  });
-
-}
-
-warmUpAPI();
+    const timeoutId =
+      setTimeout(
+        () => {
+          controller.abort();
+        },
+        timeoutMs
+      );
 
 
-/* ============================================================
-   CHECK MOBILE
-   ============================================================ */
+    try {
 
-async function checkMobile(mobile) {
+      const response =
+        await fetch(
+          API_URL,
+          {
+            method: "POST",
 
-  return await callAPI(
-    {
-      action: "check",
-      mobile: mobile
-    },
-    20000
-  );
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
 
-}
+            body:
+              JSON.stringify(
+                payload
+              ),
 
-
-/* ============================================================
-   PREPARE VISITOR GAME
-   ============================================================ */
-
-async function prepareVisitorGame() {
-
-  return await callAPI(
-    {
-      action: "prepare",
-
-      name: playerName,
-
-      mobile: playerMobile,
-
-      customerType: "VISITOR",
-
-      purchaseValue: "",
-
-      token: ""
-    },
-    20000
-  );
-
-}
-
-
-/* ============================================================
-   SUBMIT FINAL GAME RESULT
-   ============================================================ */
-
-async function submitGameResult(
-  selectedBox
-) {
-
-  return await callAPI(
-    {
-      action: "play",
-
-      name: playerName,
-
-      mobile: playerMobile,
-
-      customerType: "VISITOR",
-
-      purchaseValue: "",
-
-      token: "",
-
-      /*
-        IMPORTANT:
-        Backend expects:
-        "1"
-        "2"
-        "3"
-        "4"
-
-        NOT:
-        "Box 1"
-        "Box 2"
-      */
-
-      selectedBox:
-        String(selectedBox)
-    },
-    20000
-  );
-
-}
-
-
-/* ============================================================
-   FORM ERROR
-   ============================================================ */
-
-function showFormError(message) {
-
-  showMessageModal(
-    "Let's try that again 😅",
-    String(message).replace(
-      /\n/g,
-      "<br>"
-    ),
-    "📡",
-    "CONNECTION ISSUE"
-  );
-
-}
-
-
-/* ============================================================
-   START BUTTON
-   ============================================================ */
-
-document
-  .getElementById("startBtn")
-  .addEventListener(
-    "click",
-    () => {
-
-      show("s2");
-
-    }
-  );
-
-
-/* ============================================================
-   NAME + MOBILE FORM
-   ============================================================ */
-
-document
-  .getElementById("form")
-  .addEventListener(
-    "submit",
-    async function(e) {
-
-      e.preventDefault();
-
-
-      if (apiBusy) return;
-
-
-      const nameInput =
-        document.getElementById("name");
-
-      const phoneInput =
-        document.getElementById("phone");
-
-
-      const n =
-        nameInput.value.trim();
-
-      const p =
-        normalizeMobile(
-          phoneInput.value
+            signal:
+              controller.signal
+          }
         );
-
-
-      if (!n) {
-
-        showFormError(
-          "Please enter your name."
-        );
-
-        return;
-
-      }
 
 
       if (
-        !/^[6-9][0-9]{9}$/.test(p)
+        !response.ok
       ) {
 
-        showFormError(
-          "Please enter a valid 10-digit mobile number."
+        throw new Error(
+          "API request failed: " +
+          response.status
         );
-
-        return;
 
       }
 
 
-      apiBusy = true;
+      return await response.json();
 
 
-      const submitButton =
-        e.target.querySelector(
-          'button[type="submit"]'
+    } catch (error) {
+
+      if (
+        error.name ===
+        "AbortError"
+      ) {
+
+        throw new Error(
+          "The game server took too long to respond."
         );
 
-
-      const originalText =
-        submitButton.textContent;
+      }
 
 
-      submitButton.disabled = true;
-
-      submitButton.textContent =
-        "CHECKING… 👀";
+      throw error;
 
 
-      try {
+    } finally {
 
-        /*
-          STEP 1
-          Check duplicate mobile.
-        */
+      clearTimeout(
+        timeoutId
+      );
 
-        const checkResult =
-          await checkMobile(p);
+    }
+
+  }
 
 
-        if (!checkResult.success) {
+  /*
+   * ============================================================
+   * API WARM UP
+   * ============================================================
+   */
 
-          showFormError(
-            checkResult.message ||
-            "Something went wrong. Please try again."
+  function warmUpAPI() {
+
+    if (
+      !API_URL ||
+      API_URL.includes(
+        "PASTE_YOUR_WEB_APP"
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    fetch(
+      API_URL,
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    ).catch(
+      () => {}
+    );
+
+  }
+
+
+  warmUpAPI();
+
+
+  /*
+   * ============================================================
+   * RESET BOX UI
+   * ============================================================
+   */
+
+  function resetBoxes() {
+
+    document
+      .querySelectorAll(".boxBtn")
+      .forEach(
+        (box) => {
+
+          box.classList.remove(
+            "selected"
           );
 
-          return;
+          box.style.pointerEvents =
+            "";
 
-        }
+          box.style.opacity =
+            "";
 
+          box.style.filter =
+            "";
 
-        /*
-          DUPLICATE MOBILE
-        */
-
-        if (checkResult.exists) {
-
-          showMessageModal(
-            "Hey Buddy! 😅",
-
-            "Your chance has already been used.<br>" +
-            "Better luck next time! 🍀",
-
-            "😅",
-
-            "ALREADY PLAYED"
-          );
-
-          return;
-
-        }
-
-
-        /*
-          Save customer information.
-        */
-
-        playerName = n;
-
-        playerMobile = p;
-
-
-        gameResult = null;
-
-        chosen = 1;
-
-        opening = false;
-
-
-        /*
-          STEP 2
-          Prepare the game on the server.
-
-          The server secretly decides the
-          winning box and stores the prepared game.
-
-          We DO NOT show those results here.
-        */
-
-        submitButton.textContent =
-          "GETTING YOUR BOXES… 🎁";
-
-
-        const prepareResult =
-          await prepareVisitorGame();
-
-
-        if (!prepareResult.success) {
-
-          if (
-            prepareResult.duplicate
-          ) {
-
-            showMessageModal(
-              "Hey Buddy! 😅",
-
-              "Your chance has already been used.<br>" +
-              "Better luck next time! 🍀",
-
-              "😅",
-
-              "ALREADY PLAYED"
+          const discount =
+            box.querySelector(
+              ".boxDiscount"
             );
 
-          } else {
+          if (discount) {
 
-            showFormError(
-              prepareResult.message ||
-              "We couldn't prepare your surprise."
-            );
+            discount.textContent =
+              "";
 
           }
 
-          return;
-
         }
+      );
 
 
-        /*
-          Reset boxes.
-        */
+    document
+      .getElementById("boxGrid")
+      .classList.remove(
+        "boxesReady",
+        "visitorMode"
+      );
 
-        document
-          .querySelectorAll(".boxBtn")
-          .forEach((b) => {
+  }
 
-            b.classList.remove(
-              "selected"
+
+  /*
+   * ============================================================
+   * DISPLAY BOX INFORMATION
+   * ============================================================
+   */
+
+  function prepareBoxes(
+    result
+  ) {
+
+    resetBoxes();
+
+
+    const boxes =
+      result.boxes || [];
+
+
+    document
+      .querySelectorAll(".boxBtn")
+      .forEach(
+        (btn, index) => {
+
+          const boxData =
+            boxes[index];
+
+
+          if (!boxData) {
+            return;
+          }
+
+
+          const discountElement =
+            btn.querySelector(
+              ".boxDiscount"
             );
 
-            b.style.pointerEvents =
-              "";
 
-            b.style.opacity =
-              "";
-
-            b.style.filter =
-              "";
-
-          });
+          const loseElement =
+            btn.querySelector(
+              ".visitorLoseLabel"
+            );
 
 
-        /*
-          IMPORTANT:
-          We intentionally DO NOT read
-          prepareResult.boxes here.
+          if (
+            result.customerType ===
+            "Visitor"
+          ) {
 
-          The server may return:
-          
-          Box 1 = lose
-          Box 2 = 5%
-          Box 3 = lose
-          Box 4 = lose
+            if (
+              boxData.isWinner
+            ) {
 
-          But the customer must NEVER
-          see that before selecting.
+              discountElement
+                .textContent =
+                boxData.discount +
+                "% OFF";
 
-          Therefore all boxes remain visually
-          identical except for their colors,
-          speech bubbles and box numbers.
-        */
+              loseElement.style
+                .display =
+                "none";
+
+            } else {
+
+              discountElement
+                .textContent =
+                "";
+
+              loseElement.style
+                .display =
+                "block";
+
+            }
+
+          } else {
+
+            discountElement
+              .textContent =
+              boxData.discount +
+              "% OFF";
+
+            loseElement.style
+              .display =
+              "none";
+
+          }
+
+        }
+      );
 
 
-        show("s3");
-
-      } catch (error) {
-
-        console.error(
-          "Game preparation error:",
-          error
-        );
+    const grid =
+      document.getElementById(
+        "boxGrid"
+      );
 
 
-        showFormError(
-          "We couldn't connect to the game server right now.<br>" +
-          "Please try again."
-        );
+    grid.classList.add(
+      "boxesReady"
+    );
 
-      } finally {
 
-        apiBusy = false;
+    if (
+      result.customerType ===
+      "Visitor"
+    ) {
 
-        submitButton.disabled =
-          false;
-
-        submitButton.textContent =
-          originalText;
-
-      }
+      grid.classList.add(
+        "visitorMode"
+      );
 
     }
-  );
 
 
-/* ============================================================
-   BOX SELECTION
-   ============================================================ */
+    if (
+      result.customerType ===
+      "Visitor"
+    ) {
 
-document
-  .querySelectorAll(".boxBtn")
-  .forEach((btn) => {
+      document
+        .getElementById(
+          "gameEyebrow"
+        )
+        .textContent =
+        "VISITOR SURPRISE 👀";
 
-    btn.addEventListener(
-      "click",
-      async function() {
 
-        if (
-          opening ||
-          apiBusy
-        ) {
+      document
+        .getElementById(
+          "gameSub"
+        )
+        .textContent =
+        "One box has a little surprise. Choose wisely! 😎";
+
+
+      document
+        .getElementById(
+          "luckyNote"
+        )
+        .textContent =
+        "1 lucky box • 3 better luck boxes";
+
+    } else {
+
+      document
+        .getElementById(
+          "gameEyebrow"
+        )
+        .textContent =
+        "YOUR PURCHASE SURPRISE 🎁";
+
+
+      document
+        .getElementById(
+          "gameSub"
+        )
+        .textContent =
+        "Every box has a discount. Pick your favourite! 😎";
+
+
+      document
+        .getElementById(
+          "luckyNote"
+        )
+        .textContent =
+        "Your box = your discount";
+
+    }
+
+  }
+
+
+  /*
+   * ============================================================
+   * FORM SUBMIT
+   * ============================================================
+   */
+
+  document
+    .getElementById("form")
+    .addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+
+        if (apiBusy) {
           return;
         }
 
 
-        opening = true;
+        const name =
+          document
+            .getElementById("name")
+            .value
+            .trim();
+
+
+        const mobile =
+          normalizeMobile(
+            document
+              .getElementById("phone")
+              .value
+          );
+
+
+        const type =
+          document
+            .getElementById(
+              "customerType"
+            )
+            .value;
+
+
+        if (!name) {
+
+          showMessageModal(
+            "What's your name? 😊",
+            "Please enter your name to continue.",
+            "👋",
+            "ONE LITTLE THING"
+          );
+
+          return;
+
+        }
+
+
+        if (
+          !/^[6-9][0-9]{9}$/
+            .test(mobile)
+        ) {
+
+          showMessageModal(
+            "Check your number 📱",
+            "Please enter a valid 10-digit mobile number.",
+            "📱",
+            "ALMOST THERE"
+          );
+
+          return;
+
+        }
+
+
+        if (!type) {
+
+          showMessageModal(
+            "One more thing! 👀",
+            "Please select whether you're a Visitor or Purchased customer.",
+            "😎",
+            "SELECT YOUR TYPE"
+          );
+
+          return;
+
+        }
+
+
+        let amount = "";
+
+        let token = "";
+
+
+        if (
+          type === "PURCHASED"
+        ) {
+
+          amount =
+            Number(
+              document
+                .getElementById(
+                  "purchaseValue"
+                )
+                .value
+            );
+
+
+          token =
+            document
+              .getElementById(
+                "purchaseToken"
+              )
+              .value
+              .trim()
+              .toUpperCase();
+
+
+          if (
+            !amount ||
+            amount <= 0
+          ) {
+
+            showMessageModal(
+              "Enter your purchase value 🧾",
+              "Please enter the amount you purchased for.",
+              "🧾",
+              "PURCHASE DETAILS"
+            );
+
+            return;
+
+          }
+
+
+          if (!token) {
+
+            showMessageModal(
+              "Enter your token 🎟️",
+              "Please enter the purchase token given to you at the stall.",
+              "🎟️",
+              "PURCHASE DETAILS"
+            );
+
+            return;
+
+          }
+
+        }
+
 
         apiBusy = true;
 
 
-        /*
-          Get selected box number.
-        */
-
-        chosen =
-          Number(
-            btn.dataset.box
-          );
-
-
-        const gameMessage =
+        const button =
           document.getElementById(
-            "gameMessage"
+            "submitButton"
           );
 
 
-        gameMessage.textContent =
-          "OH! You picked that one! 😂";
+        const originalText =
+          button.textContent;
 
 
-        gameMessage.classList.remove(
-          "pop"
-        );
+        button.disabled =
+          true;
 
 
-        void gameMessage.offsetWidth;
-
-
-        gameMessage.classList.add(
-          "pop"
-        );
-
-
-        /*
-          Highlight selected box.
-        */
-
-        btn.classList.add(
-          "selected"
-        );
-
-
-        /*
-          Fade other boxes.
-        */
-
-        document
-          .querySelectorAll(".boxBtn")
-          .forEach((b) => {
-
-            b.style.pointerEvents =
-              "none";
-
-            if (b !== btn) {
-
-              b.style.opacity =
-                ".13";
-
-              b.style.filter =
-                "blur(1px)";
-
-            }
-
-          });
+        button.textContent =
+          "CHECKING… 👀";
 
 
         try {
 
           /*
-            IMPORTANT:
-            Send:
-            "1"
-            "2"
-            "3"
-            "4"
+           * FIRST:
+           * Check mobile.
+           */
 
-            Not:
-            "Box 1"
-          */
-
-          gameResult =
-            await submitGameResult(
-              chosen
+          const mobileResult =
+            await callAPI(
+              {
+                action: "check",
+                mobile: mobile
+              },
+              8000
             );
 
 
           if (
-            !gameResult.success
+            !mobileResult.success
           ) {
 
-            if (
-              gameResult.duplicate
-            ) {
+            throw new Error(
+              mobileResult.message ||
+              "Unable to check mobile."
+            );
 
-              showMessageModal(
-                "Hey Buddy! 😅",
-
-                "Your chance has already been used.<br>" +
-                "Better luck next time! 🍀",
-
-                "😅",
-
-                "ALREADY PLAYED"
-              );
-
-            } else {
-
-              showFormError(
-                gameResult.message ||
-                "Something went wrong. Please try again."
-              );
-
-            }
+          }
 
 
-            resetGameAfterError();
+          if (
+            mobileResult.exists
+          ) {
+
+            showMessageModal(
+              "Hey Buddy! 😅",
+              "Your chance has already been used.<br>Better luck next time! 🍀",
+              "😅",
+              "ALREADY PLAYED"
+            );
 
             return;
 
@@ -2342,518 +2465,922 @@ document
 
 
           /*
-            Server has now permanently
-            recorded the result.
+           * SECOND:
+           * Validate purchase if needed.
+           */
 
-            Start suspense.
-          */
+          if (
+            type === "PURCHASED"
+          ) {
 
-          setTimeout(
-            () => {
-
-              document
-                .getElementById(
-                  "suspenseText"
-                )
-                .textContent =
-                "You picked Box " +
-                chosen +
-                "…";
+            button.textContent =
+              "VERIFYING PURCHASE… 🔎";
 
 
-              show("s4");
+            const purchaseResult =
+              await callAPI(
+                {
+                  action:
+                    "validatePurchase",
 
-              runSuspense();
+                  mobile:
+                    mobile,
 
-            },
-            850
+                  purchaseValue:
+                    amount,
+
+                  token:
+                    token
+                },
+                8000
+              );
+
+
+            if (
+              !purchaseResult.success
+            ) {
+
+              if (
+                purchaseResult.tokenUsed
+              ) {
+
+                showMessageModal(
+                  "Token already used! 🎟️",
+                  "This purchase token has already been used.<br>Please check with the Kriday's Lifestyle team.",
+                  "🎟️",
+                  "TOKEN USED"
+                );
+
+              } else {
+
+                showMessageModal(
+                  "Please check your details 👀",
+                  purchaseResult.message ||
+                  "The purchase details could not be verified.",
+                  "⚠️",
+                  "VERIFICATION FAILED"
+                );
+
+              }
+
+              return;
+
+            }
+
+          }
+
+
+          /*
+           * Save player information.
+           */
+
+          playerName =
+            name;
+
+          playerMobile =
+            mobile;
+
+          customerType =
+            type;
+
+          purchaseValue =
+            amount;
+
+          purchaseToken =
+            token;
+
+
+          /*
+           * We need the server to generate
+           * the boxes BEFORE the customer chooses.
+           *
+           * We call a play-preview action.
+           */
+
+          button.textContent =
+            "PREPARING YOUR BOXES… 🎁";
+
+
+          const previewResult =
+            await callAPI(
+              {
+                action:
+                  "prepare",
+
+                name:
+                  playerName,
+
+                mobile:
+                  playerMobile,
+
+                customerType:
+                  customerType,
+
+                purchaseValue:
+                  purchaseValue,
+
+                token:
+                  purchaseToken
+              },
+              8000
+            );
+
+
+          if (
+            !previewResult.success
+          ) {
+
+            showMessageModal(
+              "Almost there! 👀",
+              previewResult.message ||
+              "We couldn't prepare your surprise. Please try again.",
+              "😅",
+              "ONE MORE TRY"
+            );
+
+            return;
+
+          }
+
+
+          gameResult =
+            previewResult;
+
+
+          chosen =
+            1;
+
+          opening =
+            false;
+
+
+          prepareBoxes(
+            gameResult
           );
+
+
+          show("s3");
 
 
         } catch (error) {
 
           console.error(
-            "Play API error:",
+            "Game API error:",
             error
           );
 
 
-          showFormError(
-            "We couldn't connect to the game server.<br>" +
-            "Please try again."
+          showMessageModal(
+            "Let's try that again 😅",
+            "We couldn't connect to the game server right now.<br>Please try again.",
+            "📡",
+            "CONNECTION ISSUE"
           );
 
-
-          resetGameAfterError();
 
         } finally {
 
-          apiBusy = false;
+          apiBusy =
+            false;
+
+
+          button.disabled =
+            false;
+
+
+          button.textContent =
+            originalText;
 
         }
 
       }
     );
-
-  });
-
-
-/* ============================================================
-   RESET AFTER ERROR
-   ============================================================ */
-
-function resetGameAfterError() {
-
-  opening = false;
-
-  gameResult = null;
-
-
-  document
-    .querySelectorAll(".boxBtn")
-    .forEach((b) => {
-
-      b.classList.remove(
-        "selected"
-      );
-
-      b.style.pointerEvents =
-        "";
-
-      b.style.opacity =
-        "";
-
-      b.style.filter =
-        "";
-
-    });
-
-
-  show("s3");
-
-}
-
-
-/* ============================================================
-   SUSPENSE
-   ============================================================ */
-
-function runSuspense() {
-
-  const box =
-    document.querySelector(
-      "#bigChosen .present"
-    );
-
-
-  const colors = [
-
-    [
-      "#c72546",
-      "#f0c35e",
-      "#a81731"
-    ],
-
-    [
-      "#dfa72b",
-      "#fff0b2",
-      "#bd821b"
-    ],
-
-    [
-      "#304b80",
-      "#e0bc59",
-      "#1d315e"
-    ],
-
-    [
-      "#4d8d69",
-      "#f1d27c",
-      "#347354"
-    ]
-
-  ];
-
-
-  const c =
-    colors[
-      chosen - 1
-    ];
-
-
-  box.style.setProperty(
-    "--box",
-    c[0]
-  );
-
-  box.style.setProperty(
-    "--ribbon",
-    c[1]
-  );
-
-  box.style.setProperty(
-    "--lid",
-    c[2]
-  );
-
-
-  const suspense =
-    document.getElementById(
-      "suspense"
-    );
-
-
-  const count =
-    document.getElementById(
-      "count"
-    );
-
-
-  const thinking =
-    document.getElementById(
-      "thinking"
-    );
-
-
-  const skip =
-    document.getElementById(
-      "skipBtn"
-    );
-
-
-  let n = 3;
-
-
-  suspense.classList.remove(
-    "open"
-  );
-
-  suspense.classList.add(
-    "shake"
-  );
-
-
-  count.textContent =
-    "3";
-
-
-  thinking.textContent =
-    "Hmm… should we open it? 🤔";
-
-
-  skip.textContent =
-    "OPEN IT! 😂";
-
-
-  skip.style.display =
-    "block";
-
-
-  suspenseTimer =
-    setInterval(
-      () => {
-
-        n--;
-
-
-        if (n === 2) {
-
-          count.textContent =
-            "2";
-
-          thinking.textContent =
-            "Wait… this might be good. 👀";
-
-        }
-
-
-        else if (n === 1) {
-
-          count.textContent =
-            "1";
-
-          thinking.textContent =
-            "Okay okay… LAST CHANCE! 😳";
-
-        }
-
-
-        else {
-
-          clearInterval(
-            suspenseTimer
-          );
-
-
-          count.textContent =
-            "🎁";
-
-
-          thinking.textContent =
-            "OPENING…";
-
-
-          suspense.classList.remove(
-            "shake"
-          );
-
-
-          suspense.classList.add(
-            "open"
-          );
-
-
-          skip.style.display =
-            "none";
-
-
-          setTimeout(
-            showReward,
-            900
-          );
-
-        }
-
-      },
-      650
-    );
-
-}
-
-
-/* ============================================================
-   SKIP SUSPENSE
-   ============================================================ */
-
-document
-  .getElementById("skipBtn")
-  .addEventListener(
-    "click",
-    () => {
-
-      if (
-        !opening ||
-        !gameResult
-      ) {
-        return;
-      }
-
-
-      clearInterval(
-        suspenseTimer
-      );
-
-
-      const suspense =
-        document.getElementById(
-          "suspense"
-        );
-
-
-      document
-        .getElementById(
-          "count"
-        )
-        .textContent =
-        "🎁";
-
-
-      document
-        .getElementById(
-          "thinking"
-        )
-        .textContent =
-        "FINE! HERE WE GO! 😂";
-
-
-      suspense.classList.remove(
-        "shake"
-      );
-
-
-      suspense.classList.add(
-        "open"
-      );
-
-
-      document
-        .getElementById(
-          "skipBtn"
-        )
-        .style.display =
-        "none";
-
-
-      setTimeout(
-        showReward,
-        750
-      );
-
-    }
-  );
-
-
-/* ============================================================
-   SERVER-CONTROLLED RESULT REVEAL
-   ============================================================ */
-
-function showReward() {
-
-  if (
-    !gameResult ||
-    !gameResult.success
-  ) {
-
-    showFormError(
-      "We couldn't load your result. Please try again."
-    );
-
-    return;
-
-  }
-
-
-  const isWinner =
-    Boolean(
-      gameResult.isWinner
-    );
-
-
-  const winReward =
-    document.getElementById(
-      "winReward"
-    );
-
-
-  const loseReward =
-    document.getElementById(
-      "loseReward"
-    );
-
-
-  winReward.style.display =
-    isWinner
-      ? "block"
-      : "none";
-
-
-  loseReward.style.display =
-    isWinner
-      ? "none"
-      : "block";
 
 
   /*
-    ONLY NOW do we show the
-    actual discount.
-  */
+   * ============================================================
+   * BOX SELECTION
+   * ============================================================
+   */
 
-  if (isWinner) {
+  document
+    .querySelectorAll(".boxBtn")
+    .forEach(
+      (btn) => {
 
-    document.getElementById(
-      "discount"
-    ).textContent =
-      String(
-        gameResult.discount
-      ) + "%";
+        btn.addEventListener(
+          "click",
+          async function() {
 
+            if (
+              opening ||
+              apiBusy
+            ) {
 
-    document.getElementById(
-      "coupon"
-    ).textContent =
-      String(
-        gameResult.couponCode
-      );
+              return;
 
-
-    makeConfetti();
-
-  }
+            }
 
 
-  show("s5");
+            opening =
+              true;
 
-}
+
+            chosen =
+              Number(
+                btn.dataset.box
+              );
 
 
-/* ============================================================
-   CONFETTI
-   ============================================================ */
+            apiBusy =
+              true;
 
-function makeConfetti() {
 
-  const c =
-    document.getElementById(
-      "confetti"
+            const gameMessage =
+              document.getElementById(
+                "gameMessage"
+              );
+
+
+            gameMessage.textContent =
+              "OH! You picked that one! 😂";
+
+
+            gameMessage.classList.remove(
+              "pop"
+            );
+
+
+            void gameMessage
+              .offsetWidth;
+
+
+            gameMessage.classList.add(
+              "pop"
+            );
+
+
+            btn.classList.add(
+              "selected"
+            );
+
+
+            document
+              .querySelectorAll(
+                ".boxBtn"
+              )
+              .forEach(
+                (box) => {
+
+                  box.style.pointerEvents =
+                    "none";
+
+
+                  if (
+                    box !== btn
+                  ) {
+
+                    box.style.opacity =
+                      ".13";
+
+                    box.style.filter =
+                      "blur(1px)";
+
+                  }
+
+                }
+              );
+
+
+            try {
+
+              /*
+               * IMPORTANT:
+               *
+               * The prepare request only creates
+               * the box layout.
+               *
+               * Now the server records the actual
+               * selected box and returns the final
+               * result.
+               */
+
+              const finalResult =
+                await callAPI(
+                  {
+                    action:
+                      "play",
+
+                    name:
+                      playerName,
+
+                    mobile:
+                      playerMobile,
+
+                    customerType:
+                      customerType,
+
+                    purchaseValue:
+                      purchaseValue,
+
+                    token:
+                      purchaseToken,
+
+                    selectedBox:
+                      String(chosen)
+                  },
+                  8000
+                );
+
+
+              if (
+                !finalResult.success
+              ) {
+
+                if (
+                  finalResult.duplicate
+                ) {
+
+                  showMessageModal(
+                    "Hey Buddy! 😅",
+                    "Your chance has already been used.<br>Better luck next time! 🍀",
+                    "😅",
+                    "ALREADY PLAYED"
+                  );
+
+                } else if (
+                  finalResult.tokenUsed
+                ) {
+
+                  showMessageModal(
+                    "Token already used! 🎟️",
+                    "This purchase token has already been used.",
+                    "🎟️",
+                    "TOKEN USED"
+                  );
+
+                } else {
+
+                  showMessageModal(
+                    "Something went wrong 😅",
+                    finalResult.message ||
+                    "Please try again.",
+                    "⚠️",
+                    "SORRY"
+                  );
+
+                }
+
+
+                resetGameAfterError();
+
+                return;
+
+              }
+
+
+              /*
+               * Replace preview result with
+               * final server result.
+               */
+
+              gameResult =
+                finalResult;
+
+
+              setTimeout(
+                function() {
+
+                  document
+                    .getElementById(
+                      "suspenseText"
+                    )
+                    .textContent =
+                    "You picked Box " +
+                    chosen +
+                    "…";
+
+
+                  show("s4");
+
+
+                  runSuspense();
+
+                },
+                850
+              );
+
+
+            } catch (error) {
+
+              console.error(
+                "Play error:",
+                error
+              );
+
+
+              showMessageModal(
+                "Let's try again 😅",
+                "We couldn't complete your play.<br>Please try again.",
+                "📡",
+                "CONNECTION ISSUE"
+              );
+
+
+              resetGameAfterError();
+
+            } finally {
+
+              apiBusy =
+                false;
+
+            }
+
+          }
+        );
+
+      }
     );
 
 
-  c.innerHTML = "";
+  /*
+   * ============================================================
+   * RESET AFTER ERROR
+   * ============================================================
+   */
+
+  function resetGameAfterError() {
+
+    opening =
+      false;
 
 
-  const colors = [
-    "#a71935",
-    "#d8a640",
-    "#171515",
-    "#2e4d80",
-    "#4d8d69"
-  ];
+    gameResult =
+      null;
 
 
-  for (
-    let i = 0;
-    i < 80;
-    i++
-  ) {
-
-    const x =
-      document.createElement(
-        "i"
-      );
+    resetBoxes();
 
 
-    x.style.left =
-      Math.random() *
-      100 +
-      "%";
-
-
-    x.style.background =
-      colors[
-        Math.floor(
-          Math.random() *
-          colors.length
-        )
-      ];
-
-
-    x.style.animationDelay =
-      Math.random() *
-      0.5 +
-      "s";
-
-
-    c.appendChild(x);
+    show("s3");
 
   }
 
-}
+
+  /*
+   * ============================================================
+   * SUSPENSE
+   * ============================================================
+   */
+
+  function runSuspense() {
+
+    const box =
+      document.querySelector(
+        "#bigChosen .present"
+      );
 
 
-/* ============================================================
-   DONE BUTTON
-   ============================================================ */
+    const colors = [
 
-document
-  .getElementById("doneBtn")
-  .addEventListener(
-    "click",
-    () => {
+      [
+        "#c72546",
+        "#f0c35e",
+        "#a81731"
+      ],
 
-      location.reload();
+      [
+        "#dfa72b",
+        "#fff0b2",
+        "#bd821b"
+      ],
+
+      [
+        "#304b80",
+        "#e0bc59",
+        "#1d315e"
+      ],
+
+      [
+        "#4d8d69",
+        "#f1d27c",
+        "#347354"
+      ]
+
+    ];
+
+
+    const c =
+      colors[
+        chosen - 1
+      ];
+
+
+    box.style.setProperty(
+      "--box",
+      c[0]
+    );
+
+
+    box.style.setProperty(
+      "--ribbon",
+      c[1]
+    );
+
+
+    box.style.setProperty(
+      "--lid",
+      c[2]
+    );
+
+
+    const suspense =
+      document.getElementById(
+        "suspense"
+      );
+
+
+    const count =
+      document.getElementById(
+        "count"
+      );
+
+
+    const thinking =
+      document.getElementById(
+        "thinking"
+      );
+
+
+    const skip =
+      document.getElementById(
+        "skipBtn"
+      );
+
+
+    let n =
+      3;
+
+
+    suspense.classList.remove(
+      "open"
+    );
+
+
+    suspense.classList.add(
+      "shake"
+    );
+
+
+    count.textContent =
+      "3";
+
+
+    thinking.textContent =
+      "Hmm… should we open it? 🤔";
+
+
+    skip.textContent =
+      "OPEN IT! 😂";
+
+
+    skip.style.display =
+      "block";
+
+
+    suspenseTimer =
+      setInterval(
+        function() {
+
+          n--;
+
+
+          if (
+            n === 2
+          ) {
+
+            count.textContent =
+              "2";
+
+            thinking.textContent =
+              "Wait… this might be good. 👀";
+
+          } else if (
+            n === 1
+          ) {
+
+            count.textContent =
+              "1";
+
+            thinking.textContent =
+              "Okay okay… LAST CHANCE! 😳";
+
+          } else {
+
+            clearInterval(
+              suspenseTimer
+            );
+
+
+            count.textContent =
+              "🎁";
+
+
+            thinking.textContent =
+              "OPENING…";
+
+
+            suspense.classList.remove(
+              "shake"
+            );
+
+
+            suspense.classList.add(
+              "open"
+            );
+
+
+            skip.style.display =
+              "none";
+
+
+            setTimeout(
+              showReward,
+              900
+            );
+
+          }
+
+        },
+        650
+      );
+
+  }
+
+
+  /*
+   * ============================================================
+   * SKIP / OPEN BUTTON
+   * ============================================================
+   */
+
+  document
+    .getElementById("skipBtn")
+    .addEventListener(
+      "click",
+      function() {
+
+        if (
+          !opening ||
+          !gameResult
+        ) {
+
+          return;
+
+        }
+
+
+        clearInterval(
+          suspenseTimer
+        );
+
+
+        const suspense =
+          document.getElementById(
+            "suspense"
+          );
+
+
+        document
+          .getElementById(
+            "count"
+          )
+          .textContent =
+          "🎁";
+
+
+        document
+          .getElementById(
+            "thinking"
+          )
+          .textContent =
+          "FINE! HERE WE GO! 😂";
+
+
+        suspense.classList.remove(
+          "shake"
+        );
+
+
+        suspense.classList.add(
+          "open"
+        );
+
+
+        document
+          .getElementById(
+            "skipBtn"
+          )
+          .style.display =
+          "none";
+
+
+        setTimeout(
+          showReward,
+          750
+        );
+
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * REWARD
+   * ============================================================
+   */
+
+  function showReward() {
+
+    if (
+      !gameResult ||
+      !gameResult.success
+    ) {
+
+      showMessageModal(
+        "Oops! 😅",
+        "We couldn't load your result. Please contact the Kriday's Lifestyle team.",
+        "😅",
+        "RESULT ERROR"
+      );
+
+      return;
 
     }
-  );
+
+
+    const isWinner =
+      Boolean(
+        gameResult.isWinner ||
+        gameResult.discount
+      );
+
+
+    document
+      .getElementById(
+        "winReward"
+      )
+      .style.display =
+      isWinner
+        ? "block"
+        : "none";
+
+
+    document
+      .getElementById(
+        "loseReward"
+      )
+      .style.display =
+      isWinner
+        ? "none"
+        : "block";
+
+
+    if (
+      isWinner
+    ) {
+
+      document
+        .getElementById(
+          "discount"
+        )
+        .textContent =
+        String(
+          gameResult.discount
+        ) +
+        "%";
+
+
+      document
+        .getElementById(
+          "coupon"
+        )
+        .textContent =
+        String(
+          gameResult.couponCode
+        );
+
+
+      if (
+        gameResult.customerType ===
+        "Purchased"
+      ) {
+
+        document
+          .getElementById(
+            "resultDetail"
+          )
+          .textContent =
+          "Show this screen to the Kriday's Lifestyle team at the stall.";
+
+      }
+
+
+      makeConfetti();
+
+    }
+
+
+    show("s5");
+
+  }
+
+
+  /*
+   * ============================================================
+   * DONE
+   * ============================================================
+   */
+
+  document
+    .getElementById("doneBtn")
+    .addEventListener(
+      "click",
+      function() {
+
+        location.reload();
+
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * CONFETTI
+   * ============================================================
+   */
+
+  function makeConfetti() {
+
+    const container =
+      document.getElementById(
+        "confetti"
+      );
+
+
+    container.innerHTML =
+      "";
+
+
+    const colors = [
+      "#a71935",
+      "#d8a640",
+      "#171515",
+      "#2e4d80",
+      "#4d8d69"
+    ];
+
+
+    for (
+      let i = 0;
+      i < 80;
+      i++
+    ) {
+
+      const piece =
+        document.createElement(
+          "i"
+        );
+
+
+      piece.style.left =
+        Math.random() *
+        100 +
+        "%";
+
+
+      piece.style.background =
+        colors[
+          Math.floor(
+            Math.random() *
+            colors.length
+          )
+        ];
+
+
+      piece.style.animationDelay =
+        Math.random() *
+        0.5 +
+        "s";
+
+
+      container.appendChild(
+        piece
+      );
+
+    }
+
+  }
 
 </script>
 

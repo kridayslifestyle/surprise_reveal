@@ -1,3388 +1,1516 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
-  />
-
-  <title>Kriday's Lifestyle — Lucky Box Game</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: Inter, Poppins, Arial, sans-serif;
-      background: #eee8df;
-      color: #171515;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 440px;
-      height: 100dvh;
-      position: relative;
-      overflow: hidden;
-      background: radial-gradient(
-        circle at 50% 0,
-        #fff 0,
-        #faf5ee 44%,
-        #eee6db 100%
-      );
-    }
-
-    .screen {
-      position: absolute;
-      inset: 0;
-      padding: 21px 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(14px);
-      transition: 0.42s ease;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    .screen.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: none;
-    }
-
-    .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      background: #181616;
-      color: white;
-      display: grid;
-      place-items: center;
-      font-weight: 950;
-      margin-bottom: 9px;
-      flex-shrink: 0;
-    }
-
-    .brand {
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: 0.7px;
-    }
-
-    .eyebrow {
-      margin-top: 21px;
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 2px;
-      color: #a71935;
-      text-transform: uppercase;
-    }
-
-    h1,
-    h2 {
-      margin: 9px 0 8px;
-      text-align: center;
-      line-height: 1.05;
-      letter-spacing: -1.2px;
-    }
-
-    h1 {
-      font-size: 32px;
-    }
-
-    h2 {
-      font-size: 28px;
-    }
-
-    .sub {
-      text-align: center;
-      color: #777;
-      font-size: 13px;
-      line-height: 1.5;
-      max-width: 325px;
-    }
-
-    .btn {
-      width: 100%;
-      max-width: 350px;
-      padding: 16px;
-      border: 0;
-      border-radius: 16px;
-      background: #181616;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 950;
-      letter-spacing: 0.5px;
-      box-shadow: 0 12px 25px #0002;
-      cursor: pointer;
-    }
-
-    .btn.red {
-      background: #a71935;
-    }
-
-    .btn:disabled {
-      opacity: 0.65;
-      cursor: wait;
-    }
-
-    .bottom {
-      margin-top: auto;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      padding-top: 15px;
-    }
-
-    .note {
-      font-size: 10px;
-      color: #999;
-      margin-top: 9px;
-      text-align: center;
-    }
-
-    /* HERO */
-
-    .hero {
-      position: relative;
-      width: 170px;
-      height: 170px;
-      margin: 37px 0 8px;
-    }
-
-    .hero .body {
-      position: absolute;
-      left: 20px;
-      bottom: 8px;
-      width: 130px;
-      height: 95px;
-      border-radius: 9px;
-      background: linear-gradient(145deg, #cf3150, #84172a);
-      box-shadow: 0 20px 35px #0002;
-    }
-
-    .hero .body::after {
-      content: "";
-      position: absolute;
-      left: 55px;
-      width: 20px;
-      height: 95px;
-      background: #e1b04e;
-    }
-
-    .hero .lid {
-      position: absolute;
-      left: 10px;
-      top: 52px;
-      width: 150px;
-      height: 28px;
-      border-radius: 7px;
-      background: #b91f3b;
-    }
-
-    .hero .lid::after {
-      content: "";
-      position: absolute;
-      left: 65px;
-      width: 20px;
-      height: 28px;
-      background: #e1b04e;
-    }
-
-    /* FORM */
-
-    .card {
-      width: 100%;
-      max-width: 350px;
-      background: #fff;
-      border: 1px solid #eee3d8;
-      border-radius: 23px;
-      padding: 20px;
-      margin-top: 25px;
-      box-shadow: 0 18px 55px #0000000d;
-    }
-
-    label {
-      display: block;
-      font-size: 10px;
-      font-weight: 900;
-      color: #777;
-      letter-spacing: 1px;
-      margin-bottom: 7px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      height: 51px;
-      border: 1px solid #ddd4ca;
-      border-radius: 13px;
-      padding: 0 14px;
-      font-size: 16px;
-      margin-bottom: 14px;
-      outline: none;
-      background: #fff;
-      color: #171515;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #a71935;
-    }
-
-    .privacy-note {
-      margin: -2px 2px 15px;
-      padding: 10px 11px;
-      border-radius: 10px;
-      background: #faf6f0;
-      color: #8a8178;
-      font-size: 9.5px;
-      line-height: 1.45;
-      text-align: center;
-    }
-
-    .privacy-note strong {
-      color: #655d56;
-    }
-
-    .purchaseFields {
-      display: none;
-    }
-
-    .purchaseFields.show {
-      display: block;
-      animation: fieldAppear 0.3s ease;
-    }
-
-    @keyframes fieldAppear {
-      from {
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Kriday's Lifestyle — Lucky Box Game</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: Inter, Poppins, Arial, sans-serif;
+        background: #eee8df;
+        color: #171515;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+      }
+      .app {
+        width: 100%;
+        max-width: 440px;
+        height: 100dvh;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(
+          circle at 50% 0,
+          #fff 0,
+          #faf5ee 44%,
+          #eee6db 100%
+        );
+      }
+      .screen {
+        position: absolute;
+        inset: 0;
+        padding: 21px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         opacity: 0;
-        transform: translateY(-5px);
+        pointer-events: none;
+        transform: translateY(14px);
+        transition: 0.42s ease;
       }
-
-      to {
+      .screen.active {
         opacity: 1;
-        transform: translateY(0);
+        pointer-events: auto;
+        transform: none;
       }
-    }
-
-    .typeHint {
-      margin: -5px 0 13px;
-      padding: 9px 11px;
-      border-radius: 10px;
-      background: #faf6f0;
-      color: #8a8178;
-      font-size: 10px;
-      line-height: 1.4;
-      text-align: center;
-    }
-
-    /* GAME */
-
-    .gameTop {
-      margin-top: 17px;
-      width: 100%;
-      text-align: center;
-      min-height: 42px;
-    }
-
-    .gameMessage {
-      display: inline-block;
-      background: #181616;
-      color: #fff;
-      border-radius: 999px;
-      padding: 8px 13px;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.3px;
-      box-shadow: 0 7px 15px #0002;
-      transition: 0.25s;
-    }
-
-    .gameMessage.pop {
-      animation: messagePop 0.35s cubic-bezier(0.2, 1.6, 0.3, 1);
-    }
-
-    @keyframes messagePop {
-      50% {
-        transform: scale(1.1) rotate(-2deg);
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 15px;
+        background: #181616;
+        color: white;
+        display: grid;
+        place-items: center;
+        font-weight: 950;
+        margin-bottom: 9px;
       }
-    }
-
-    .boxGrid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .boxBtn {
-      height: 188px;
-      position: relative;
-      border: 0;
-      background: transparent;
-      padding: 0;
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: 0.35s;
-      animation: boxIdle 2.8s ease-in-out infinite;
-    }
-
-    .boxBtn:nth-child(1) {
-      --box: #c72546;
-      --ribbon: #f0c35e;
-      --lid: #a81731;
-      animation-delay: 0s;
-    }
-
-    .boxBtn:nth-child(2) {
-      --box: #dfa72b;
-      --ribbon: #fff0b2;
-      --lid: #bd821b;
-      animation-delay: 0.7s;
-    }
-
-    .boxBtn:nth-child(3) {
-      --box: #304b80;
-      --ribbon: #e0bc59;
-      --lid: #1d315e;
-      animation-delay: 1.4s;
-    }
-
-    .boxBtn:nth-child(4) {
-      --box: #4d8d69;
-      --ribbon: #f1d27c;
-      --lid: #347354;
-      animation-delay: 2.1s;
-    }
-
-    @keyframes boxIdle {
-      0%,
-      100% {
-        transform: translateY(0);
+      .brand {
+        font-size: 15px;
+        font-weight: 900;
+        letter-spacing: 0.7px;
       }
-
-      45% {
-        transform: translateY(-5px);
+      .eyebrow {
+        margin-top: 21px;
+        font-size: 10px;
+        font-weight: 950;
+        letter-spacing: 2px;
+        color: #a71935;
+        text-transform: uppercase;
       }
-
-      55% {
-        transform: translateY(-2px);
+      h1,
+      h2 {
+        margin: 9px 0 8px;
+        text-align: center;
+        line-height: 1.05;
+        letter-spacing: -1.2px;
       }
-    }
-
-    .boxBtn .floor {
-      position: absolute;
-      left: 18%;
-      bottom: 10px;
-      width: 64%;
-      height: 19px;
-      border-radius: 50%;
-      background: #0002;
-      filter: blur(8px);
-      transition: 0.35s;
-    }
-
-    .present {
-      position: absolute;
-      left: 50%;
-      top: 43px;
-      width: 110px;
-      height: 112px;
-      transform: translateX(-50%);
-      transition: 0.35s;
-    }
-
-    .present .body {
-      position: absolute;
-      left: 11px;
-      bottom: 0;
-      width: 88px;
-      height: 69px;
-      border-radius: 5px 5px 11px 11px;
-      background: var(--box);
-      box-shadow:
-        inset 6px 0 9px #fff2,
-        inset -8px -7px 13px #0002;
-    }
-
-    .present .body::after {
-      content: "";
-      position: absolute;
-      left: 37px;
-      width: 15px;
-      height: 69px;
-      background: var(--ribbon);
-    }
-
-    .present .lid {
-      position: absolute;
-      left: 4px;
-      top: 26px;
-      width: 102px;
-      height: 24px;
-      border-radius: 6px;
-      background: var(--lid);
-      z-index: 2;
-      box-shadow: 0 5px 8px #0002;
-      transition: 0.5s;
-    }
-
-    .present .lid::after {
-      content: "";
-      position: absolute;
-      left: 43px;
-      width: 15px;
-      height: 24px;
-      background: var(--ribbon);
-    }
-
-    .present .bow::before,
-    .present .bow::after {
-      content: "";
-      position: absolute;
-      top: 10px;
-      width: 30px;
-      height: 21px;
-      border: 7px solid var(--ribbon);
-      border-radius: 50%;
-      z-index: 4;
-    }
-
-    .present .bow::before {
-      left: 30px;
-      transform: rotate(-22deg);
-    }
-
-    .present .bow::after {
-      left: 49px;
-      transform: rotate(22deg);
-    }
-
-    .tag {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 1px;
-    }
-
-    .speech {
-      position: absolute;
-      z-index: 20;
-      top: -2px;
-      left: 50%;
-      transform: translateX(-50%) scale(0.72);
-      opacity: 0;
-      white-space: nowrap;
-      min-width: 112px;
-      padding: 10px 14px;
-      border-radius: 14px;
-      background: #181616;
-      color: #fff;
-      border: 2px solid #fff;
-      font-size: 13px;
-      line-height: 1;
-      font-weight: 950;
-      letter-spacing: 0.35px;
-      text-align: center;
-      box-shadow: 0 8px 18px #0003;
-      pointer-events: none;
-    }
-
-    .speech::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -8px;
-      width: 14px;
-      height: 14px;
-      background: #181616;
-      border-right: 2px solid #fff;
-      border-bottom: 2px solid #fff;
-      transform: translateX(-50%) rotate(45deg);
-    }
-
-    .boxBtn:nth-child(1) .speech {
-      animation: speechShow 8s infinite 0s;
-    }
-
-    .boxBtn:nth-child(2) .speech {
-      animation: speechShow 8s infinite 2s;
-    }
-
-    .boxBtn:nth-child(3) .speech {
-      animation: speechShow 8s infinite 4s;
-    }
-
-    .boxBtn:nth-child(4) .speech {
-      animation: speechShow 8s infinite 6s;
-    }
-
-    @keyframes speechShow {
-      0%,
-      78%,
-      100% {
-        opacity: 0;
-        transform: translateX(-50%) scale(0.7);
+      h1 {
+        font-size: 32px;
       }
-
-      81% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1.08) rotate(-2deg);
+      h2 {
+        font-size: 28px;
       }
-
-      87% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1) rotate(1deg);
-      }
-
-      93% {
-        opacity: 0;
-        transform: translateX(-50%) scale(0.9);
-      }
-    }
-
-    .boxBtn:hover .present {
-      transform: translateX(-50%) translateY(-8px) rotate(-2deg);
-    }
-
-    .boxBtn:active .present {
-      transform: translateX(-50%) scale(0.93);
-    }
-
-    .choiceFooter {
-      font-size: 11px;
-      color: #999;
-      text-align: center;
-      margin-top: 12px;
-    }
-
-    .luckyNote {
-      font-size: 12px;
-      font-weight: 800;
-      margin-top: 7px;
-      color: #a71935;
-    }
-
-    .boxBtn.selected {
-      animation: selectedWinner 0.9s cubic-bezier(0.15, 1.5, 0.3, 1)
-        forwards !important;
-      z-index: 10;
-    }
-
-    @keyframes selectedWinner {
-      0% {
-        transform: scale(1);
-      }
-
-      25% {
-        transform: scale(1.12) translateY(-10px) rotate(-3deg);
-      }
-
-      45% {
-        transform: scale(1.08) translateY(-6px) rotate(3deg);
-      }
-
-      65% {
-        transform: scale(1.14) translateY(-11px) rotate(-2deg);
-      }
-
-      100% {
-        transform: scale(1.08) translateY(-7px);
-      }
-    }
-
-    .boxBtn.selected .present {
-      animation: chosenShake 0.55s ease;
-    }
-
-    @keyframes chosenShake {
-      0%,
-      100% {
-        transform: translateX(-50%);
-      }
-
-      20% {
-        transform: translateX(-50%) rotate(-7deg);
-      }
-
-      40% {
-        transform: translateX(-50%) rotate(7deg);
-      }
-
-      60% {
-        transform: translateX(-50%) rotate(-4deg);
-      }
-
-      80% {
-        transform: translateX(-50%) rotate(2deg);
-      }
-    }
-
-    .boxBtn.selected .speech {
-      opacity: 1;
-      animation: none;
-      transform: translateX(-50%) translateY(-3px) scale(1.18);
-      background: #a71935;
-      color: #fff;
-      border: 2px solid #fff;
-      min-width: 145px;
-      padding: 12px 16px;
-      font-size: 15px;
-      box-shadow: 0 10px 24px #0004;
-    }
-
-    .boxBtn.selected .speech::after {
-      background: #a71935;
-    }
-
-    .boxBtn.selected .tag {
-      color: #a71935;
-    }
-
-    /* BOX RESULT PREVIEW */
-
-    .boxDiscount {
-      position: absolute;
-      left: 50%;
-      bottom: 26px;
-      transform: translateX(-50%);
-      z-index: 30;
-      font-size: 13px;
-      font-weight: 950;
-      color: white;
-      background: #181616;
-      padding: 5px 9px;
-      border-radius: 999px;
-      opacity: 0;
-      transition: 0.25s;
-      pointer-events: none;
-    }
-
-    .boxesReady .boxDiscount {
-      opacity: 1;
-    }
-
-    .visitorLoseLabel {
-      position: absolute;
-      left: 50%;
-      bottom: 26px;
-      transform: translateX(-50%);
-      z-index: 30;
-      font-size: 10px;
-      font-weight: 950;
-      color: white;
-      background: #181616;
-      padding: 5px 8px;
-      border-radius: 999px;
-      opacity: 0;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    .boxesReady.visitorMode .visitorLoseLabel {
-      opacity: 1;
-    }
-
-    /* SUSPENSE */
-
-    .suspenseBox {
-      width: 100%;
-      max-width: 350px;
-      text-align: center;
-      margin-top: 39px;
-    }
-
-    .bigChosen {
-      position: relative;
-      width: 190px;
-      height: 185px;
-      margin: auto;
-    }
-
-    .bigChosen .present {
-      transform: translateX(-50%) scale(1.35);
-      top: 37px;
-    }
-
-    .suspenseText {
-      font-size: 18px;
-      font-weight: 950;
-      margin-top: 10px;
-      min-height: 28px;
-    }
-
-    .count {
-      font-size: 58px;
-      font-weight: 950;
-      color: #a71935;
-      line-height: 1;
-      margin: 13px 0;
-    }
-
-    .thinking {
-      font-size: 12px;
-      color: #777;
-    }
-
-    .suspenseBox.shake .present {
-      animation: suspenseShake 0.16s infinite;
-    }
-
-    @keyframes suspenseShake {
-      0% {
-        transform: translateX(-50%) rotate(-2deg);
-      }
-
-      50% {
-        transform: translateX(-50%) rotate(2deg);
-      }
-
-      100% {
-        transform: translateX(-50%) rotate(-2deg);
-      }
-    }
-
-    .suspenseBox.open .lid {
-      transform: translateY(-62px) rotate(-8deg);
-    }
-
-    .suspenseBox.open .present {
-      animation: openPop 0.65s ease;
-    }
-
-    @keyframes openPop {
-      45% {
-        transform: translateX(-50%) scale(1.48);
-      }
-    }
-
-    .light {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: 180px;
-      height: 180px;
-      transform: translateX(-50%);
-      border-radius: 50%;
-      background: #f1c95d33;
-      filter: blur(10px);
-      opacity: 0;
-    }
-
-    .suspenseBox.open .light {
-      opacity: 1;
-      animation: lightPulse 0.8s infinite alternate;
-    }
-
-    @keyframes lightPulse {
-      to {
-        transform: translateX(-50%) scale(1.15);
-        opacity: 0.75;
-      }
-    }
-
-    /* REWARD */
-
-    .loseReward {
-      display: none;
-    }
-
-    .loseSticker {
-      display: inline-block;
-      margin: 24px auto 5px;
-      padding: 11px 15px;
-      border-radius: 999px;
-      background: #f8eee3;
-      color: #9a6949;
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 1px;
-    }
-
-    .reward {
-      width: 100%;
-      max-width: 350px;
-      background: #fff;
-      border: 1px solid #eee3d8;
-      border-radius: 28px;
-      padding: 27px 18px;
-      text-align: center;
-      margin-top: 34px;
-      box-shadow: 0 22px 60px #0002;
-    }
-
-    .rewardEmoji {
-      font-size: 52px;
-      animation: pop 0.65s cubic-bezier(0.2, 1.5, 0.3, 1);
-    }
-
-    @keyframes pop {
-      from {
-        transform: scale(0.1);
-      }
-
-      to {
-        transform: scale(1);
-      }
-    }
-
-    .discount {
-      font-size: 72px;
-      line-height: 1;
-      font-weight: 950;
-      letter-spacing: -5px;
-      color: #a71935;
-      margin-top: 12px;
-    }
-
-    .off {
-      font-size: 17px;
-      font-weight: 950;
-      letter-spacing: 3px;
-    }
-
-    .coupon {
-      margin: 21px auto 8px;
-      max-width: 245px;
-      padding: 13px;
-      border: 1px dashed #c9baa7;
-      border-radius: 12px;
-      background: #f8f1e8;
-      font-weight: 950;
-      letter-spacing: 2px;
-    }
-
-    .resultDetail {
-      margin-top: 10px;
-      color: #777;
-      font-size: 11px;
-      line-height: 1.5;
-    }
-
-    .confetti {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 900;
-    }
-
-    .confetti i {
-      position: absolute;
-      top: -15px;
-      width: 7px;
-      height: 12px;
-      animation: fall 1.8s linear forwards;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(720px) rotate(900deg);
-        opacity: 0.1;
-      }
-    }
-
-    /* MESSAGE MODAL */
-
-    .messageModal {
-      position: absolute;
-      inset: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 22px;
-      background: rgba(23, 21, 21, 0.48);
-      backdrop-filter: blur(4px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .messageModal.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .messageModalCard {
-      width: 100%;
-      max-width: 340px;
-      background: #fff;
-      border: 1px solid #eee3d8;
-      border-radius: 24px;
-      padding: 26px 20px 20px;
-      text-align: center;
-      box-shadow: 0 24px 70px #0003;
-      transform: translateY(12px) scale(0.96);
-      transition: transform 0.3s cubic-bezier(0.2, 1.4, 0.3, 1);
-    }
-
-    .messageModal.show .messageModalCard {
-      transform: translateY(0) scale(1);
-    }
-
-    .messageModalIcon {
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 13px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: #f8eee3;
-      font-size: 29px;
-    }
-
-    .messageModalEyebrow {
-      margin-top: 0;
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 2px;
-      color: #a71935;
-      text-transform: uppercase;
-    }
-
-    .messageModalTitle {
-      margin: 8px 0;
-      font-size: 23px;
-      line-height: 1.08;
-      font-weight: 950;
-      letter-spacing: -0.7px;
-    }
-
-    .messageModalText {
-      color: #777;
-      font-size: 12px;
-      line-height: 1.55;
-      margin: 0 auto 18px;
-      max-width: 270px;
-    }
-
-    .messageModalBtn {
-      width: 100%;
-      border: 0;
-      border-radius: 14px;
-      padding: 14px;
-      background: #a71935;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 950;
-      letter-spacing: 0.5px;
-      box-shadow: 0 10px 22px #a7193530;
-      cursor: pointer;
-    }
-
-    @media (max-width: 350px) {
-      .speech {
-        font-size: 11px;
-        min-width: 100px;
-        padding: 9px 10px;
-      }
-
-      .boxBtn.selected .speech {
+      .sub {
+        text-align: center;
+        color: #777;
         font-size: 13px;
-        min-width: 128px;
+        line-height: 1.5;
+        max-width: 325px;
+      }
+      .btn {
+        width: 100%;
+        max-width: 350px;
+        padding: 16px;
+        border: 0;
+        border-radius: 16px;
+        background: #181616;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 950;
+        letter-spacing: 0.5px;
+        box-shadow: 0 12px 25px #0002;
+      }
+      .btn.red {
+        background: #a71935;
+      }
+      .bottom {
+        margin-top: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      .note {
+        font-size: 10px;
+        color: #999;
+        margin-top: 9px;
+        text-align: center;
       }
 
+      /* form */
+      .hero {
+        position: relative;
+        width: 170px;
+        height: 170px;
+        margin: 37px 0 8px;
+      }
+      .hero .body {
+        position: absolute;
+        left: 20px;
+        bottom: 8px;
+        width: 130px;
+        height: 95px;
+        border-radius: 9px;
+        background: linear-gradient(145deg, #cf3150, #84172a);
+        box-shadow: 0 20px 35px #0002;
+      }
+      .hero .body:after {
+        content: "";
+        position: absolute;
+        left: 55px;
+        width: 20px;
+        height: 95px;
+        background: #e1b04e;
+      }
+      .hero .lid {
+        position: absolute;
+        left: 10px;
+        top: 52px;
+        width: 150px;
+        height: 28px;
+        border-radius: 7px;
+        background: #b91f3b;
+      }
+      .hero .lid:after {
+        content: "";
+        position: absolute;
+        left: 65px;
+        width: 20px;
+        height: 28px;
+        background: #e1b04e;
+      }
+      .card {
+        width: 100%;
+        max-width: 350px;
+        background: #fff;
+        border: 1px solid #eee3d8;
+        border-radius: 23px;
+        padding: 20px;
+        margin-top: 25px;
+        box-shadow: 0 18px 55px #0000000d;
+      }
+      label {
+        display: block;
+        font-size: 10px;
+        font-weight: 900;
+        color: #777;
+        letter-spacing: 1px;
+        margin-bottom: 7px;
+      }
+      input {
+        width: 100%;
+        height: 51px;
+        border: 1px solid #ddd4ca;
+        border-radius: 13px;
+        padding: 0 14px;
+        font-size: 16px;
+        margin-bottom: 14px;
+        outline: none;
+      }
+      input:focus {
+        border-color: #a71935;
+      }
+      .privacy-note {
+        margin: -2px 2px 15px;
+        padding: 10px 11px;
+        border-radius: 10px;
+        background: #faf6f0;
+        color: #8a8178;
+        font-size: 9.5px;
+        line-height: 1.45;
+        text-align: center;
+      }
+      .privacy-note strong {
+        color: #655d56;
+      }
+
+      /* GAME */
+      .gameTop {
+        margin-top: 17px;
+        width: 100%;
+        text-align: center;
+        min-height: 42px;
+      }
+      .gameMessage {
+        display: inline-block;
+        background: #181616;
+        color: #fff;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.3px;
+        box-shadow: 0 7px 15px #0002;
+        transition: 0.25s;
+      }
+      .gameMessage.pop {
+        animation: messagePop 0.35s cubic-bezier(0.2, 1.6, 0.3, 1);
+      }
+      @keyframes messagePop {
+        50% {
+          transform: scale(1.1) rotate(-2deg);
+        }
+      }
+
+      .boxGrid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 8px;
+      }
       .boxBtn {
-        height: 175px;
+        height: 188px;
+        position: relative;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        touch-action: manipulation;
+        transition: 0.35s;
       }
-
+      .boxBtn .floor {
+        position: absolute;
+        left: 18%;
+        bottom: 10px;
+        width: 64%;
+        height: 19px;
+        border-radius: 50%;
+        background: #0002;
+        filter: blur(8px);
+        transition: 0.35s;
+      }
       .present {
-        transform: translateX(-50%) scale(0.9);
+        position: absolute;
+        left: 50%;
+        top: 43px;
+        width: 110px;
+        height: 112px;
+        transform: translateX(-50%);
+        transition: 0.35s;
       }
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="app">
-
-  <!-- MESSAGE MODAL -->
-  <div class="messageModal" id="messageModal" aria-hidden="true">
-    <div class="messageModalCard" role="dialog" aria-modal="true">
-
-      <div class="messageModalIcon" id="messageModalIcon">
-        😅
-      </div>
-
-      <div class="messageModalEyebrow" id="messageModalEyebrow">
-        NOTICE
-      </div>
-
-      <div class="messageModalTitle" id="messageModalTitle">
-        Hey Buddy!
-      </div>
-
-      <div class="messageModalText" id="messageModalText">
-        Something happened.
-      </div>
-
-      <button
-        class="messageModalBtn"
-        id="messageModalBtn"
-        type="button"
-      >
-        OKAY, GOT IT ❤️
-      </button>
-
-    </div>
-  </div>
-
-
-  <!-- SCREEN 1 -->
-  <section class="screen active" id="s1">
-
-    <div class="logo">K</div>
-
-    <div class="brand">
-      KRIDAY'S LIFESTYLE
-    </div>
-
-    <div class="hero">
-      <div class="body"></div>
-      <div class="lid"></div>
-    </div>
-
-    <div class="eyebrow">
-      SCAN • PLAY • WIN
-    </div>
-
-    <h1>
-      🎁 Let's Play<br>
-      for a Surprise!
-    </h1>
-
-    <div class="sub">
-      Pick a lucky box. It might have a little something waiting for you.
-    </div>
-
-    <div class="bottom">
-      <button class="btn red" id="startBtn">
-        LET'S PLAY 😎
-      </button>
-    </div>
-
-    <div class="note">
-      Kriday's Lifestyle
-    </div>
-
-  </section>
-
-
-  <!-- SCREEN 2 -->
-  <section class="screen" id="s2">
-
-    <div class="logo">K</div>
-
-    <div class="brand">
-      KRIDAY'S LIFESTYLE
-    </div>
-
-    <div class="eyebrow">
-      BEFORE THE FUN 👀
-    </div>
-
-    <h2>
-      Just a few things.<br>
-      <span style="color:#a71935">
-        Your surprise is waiting! 🎁
-      </span>
-    </h2>
-
-    <div class="sub">
-      Enter your details to continue.
-    </div>
-
-    <form class="card" id="form">
-
-      <label for="name">
-        NAME
-      </label>
-
-      <input
-        id="name"
-        required
-        placeholder="Your name"
-        autocomplete="name"
-      />
-
-
-      <label for="phone">
-        MOBILE NUMBER
-      </label>
-
-      <input
-        id="phone"
-        required
-        maxlength="10"
-        inputmode="numeric"
-        autocomplete="tel"
-        placeholder="10-digit number"
-      />
-
-
-      <label for="customerType">
-        YOU ARE HERE AS
-      </label>
-
-      <select
-        id="customerType"
-        required
-      >
-        <option value="">
-          Select one
-        </option>
-
-        <option value="VISITOR">
-          Visitor
-        </option>
-
-        <option value="PURCHASED">
-          Purchased
-        </option>
-      </select>
-
-
-      <!-- PURCHASE FIELDS -->
-
-      <div
-        class="purchaseFields"
-        id="purchaseFields"
-      >
-
-        <div class="typeHint">
-          Enter your purchase amount and the purchase token
-          given to you at the stall.
-        </div>
-
-        <label for="purchaseValue">
-          PURCHASE VALUE
-        </label>
-
-        <input
-          id="purchaseValue"
-          type="number"
-          min="1"
-          step="1"
-          inputmode="numeric"
-          placeholder="Example: 1800"
-        />
-
-
-        <label for="purchaseToken">
-          PURCHASE TOKEN
-        </label>
-
-        <input
-          id="purchaseToken"
-          type="text"
-          maxlength="10"
-          autocomplete="off"
-          placeholder="Enter your token"
-        />
-
-      </div>
-
-
-      <div class="privacy-note">
-        🔒 <strong>Your details are safe with us.</strong><br>
-        We won't sell or share your information. It will only be
-        used for the Kriday's Lifestyle experience and relevant
-        marketing communication.
-      </div>
-
-
-      <button
-        class="btn red"
-        id="submitButton"
-        type="submit"
-      >
-        SHOW ME MY SURPRISE 🎁
-      </button>
-
-    </form>
-
-  </section>
-
-
-  <!-- SCREEN 3 -->
-  <section class="screen" id="s3">
-
-    <div class="logo">K</div>
-
-    <div class="brand">
-      KRIDAY'S LIFESTYLE
-    </div>
-
-    <div class="eyebrow" id="gameEyebrow">
-      UH-OH… TOO MANY CHOICES 😜
-    </div>
-
-    <h2>
-      Which one is lucky?
-    </h2>
-
-    <div class="sub" id="gameSub">
-      Don't ask us. We don't know either. 😂
-    </div>
-
-
-    <div class="gameTop">
-
-      <div
-        class="gameMessage"
-        id="gameMessage"
-      >
-        One of them is calling your name… 👀
-      </div>
-
-    </div>
-
-
-    <div
-      class="boxGrid"
-      id="boxGrid"
-    >
-
-      <!-- BOX 1 -->
-      <button
-        class="boxBtn"
-        data-box="1"
-      >
-
-        <span class="speech">
-          PICK ME! 😏
-        </span>
-
-        <span class="floor"></span>
-
-        <div class="present">
-
-          <div class="lid"></div>
-
-          <div class="body"></div>
-
-          <div class="bow"></div>
-
-        </div>
-
-        <span class="boxDiscount"></span>
-
-        <span class="visitorLoseLabel">
-          BETTER LUCK
-        </span>
-
-        <span class="tag">
-          BOX 01
-        </span>
-
-      </button>
-
-
-      <!-- BOX 2 -->
-      <button
-        class="boxBtn"
-        data-box="2"
-      >
-
-        <span class="speech">
-          I LOOK LUCKY! 👀
-        </span>
-
-        <span class="floor"></span>
-
-        <div class="present">
-
-          <div class="lid"></div>
-
-          <div class="body"></div>
-
-          <div class="bow"></div>
-
-        </div>
-
-        <span class="boxDiscount"></span>
-
-        <span class="visitorLoseLabel">
-          BETTER LUCK
-        </span>
-
-        <span class="tag">
-          BOX 02
-        </span>
-
-      </button>
-
-
-      <!-- BOX 3 -->
-      <button
-        class="boxBtn"
-        data-box="3"
-      >
-
-        <span class="speech">
-          ME ME ME! 😂
-        </span>
-
-        <span class="floor"></span>
-
-        <div class="present">
-
-          <div class="lid"></div>
-
-          <div class="body"></div>
-
-          <div class="bow"></div>
-
-        </div>
-
-        <span class="boxDiscount"></span>
-
-        <span class="visitorLoseLabel">
-          BETTER LUCK
-        </span>
-
-        <span class="tag">
-          BOX 03
-        </span>
-
-      </button>
-
-
-      <!-- BOX 4 -->
-      <button
-        class="boxBtn"
-        data-box="4"
-      >
-
-        <span class="speech">
-          DON'T IGNORE ME! 😎
-        </span>
-
-        <span class="floor"></span>
-
-        <div class="present">
-
-          <div class="lid"></div>
-
-          <div class="body"></div>
-
-          <div class="bow"></div>
-
-        </div>
-
-        <span class="boxDiscount"></span>
-
-        <span class="visitorLoseLabel">
-          BETTER LUCK
-        </span>
-
-        <span class="tag">
-          BOX 04
-        </span>
-
-      </button>
-
-    </div>
-
-
-    <div class="choiceFooter">
-      Tap one. No changing your mind. 😜
-    </div>
-
-    <div
-      class="luckyNote"
-      id="luckyNote"
-    >
-      Your box = your surprise
-    </div>
-
-  </section>
-
-
-  <!-- SCREEN 4 -->
-  <section class="screen" id="s4">
-
-    <div class="logo">K</div>
-
-    <div class="brand">
-      KRIDAY'S LIFESTYLE
-    </div>
-
-    <div class="eyebrow">
-      WAIT… LET'S SEE 👀
-    </div>
-
-
-    <div
-      class="suspenseBox"
-      id="suspense"
-    >
-
-      <div
-        class="bigChosen"
-        id="bigChosen"
-      >
-
-        <div class="light"></div>
-
-        <div class="present">
-
-          <div class="lid"></div>
-
-          <div class="body"></div>
-
-          <div class="bow"></div>
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="suspenseText"
-        id="suspenseText"
-      >
-        You picked Box 01…
-      </div>
-
-
-      <div
-        class="count"
-        id="count"
-      >
-        3
-      </div>
-
-
-      <div
-        class="thinking"
-        id="thinking"
-      >
-        Hmm… should we open it?
-      </div>
-
-    </div>
-
-
-    <div class="bottom">
-
-      <button
-        class="btn"
-        id="skipBtn"
-      >
-        OPEN IT! 😂
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- SCREEN 5 -->
-  <section class="screen" id="s5">
-
-    <div class="logo">K</div>
-
-    <div class="brand">
-      KRIDAY'S LIFESTYLE
-    </div>
-
-
-    <!-- WIN -->
-
-    <div
-      class="reward"
-      id="winReward"
-    >
-
-      <div class="rewardEmoji">
-        🎉
-      </div>
-
-      <div class="eyebrow">
-        LUCKY YOU!
-      </div>
-
-      <div
-        class="discount"
-        id="discount"
-      >
-        17%
-      </div>
-
-      <div class="off">
-        OFF
-      </div>
-
-      <div
-        class="sub"
-        style="margin:10px auto 0"
-      >
-        Your mystery box had a little something waiting
-        for you. 😎
-      </div>
-
-      <div
-        class="coupon"
-        id="coupon"
-      >
-        KRIDAY17X
-      </div>
-
-      <div
-        class="resultDetail"
-        id="resultDetail"
-      >
-        Show this screen to the Kriday's Lifestyle team
-        at the stall.
-      </div>
-
-      <div class="note">
-        Your discount is valid for this purchase.
-      </div>
-
-    </div>
-
-
-    <!-- LOSE -->
-
-    <div
-      class="reward loseReward"
-      id="loseReward"
-    >
-
-      <div class="rewardEmoji">
-        😅
-      </div>
-
-      <div class="eyebrow">
-        OOPS… SO CLOSE!
-      </div>
-
-      <h2 style="margin:10px 0 7px">
-        Better luck next time, buddy! 🍀
-      </h2>
-
-      <div
-        class="sub"
-        style="margin:0 auto"
-      >
-        This time the surprise wasn't yours —
-        but thanks for playing with us! ❤️
-      </div>
-
-      <div class="loseSticker">
-        MAYBE NEXT TIME 👀
-      </div>
-
-      <div class="note">
-        Thanks for playing with Kriday's Lifestyle.
-      </div>
-
-    </div>
-
-
-    <div class="bottom">
-
-      <button
-        class="btn red"
-        id="doneBtn"
-      >
-        DONE ❤️
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <div
-    class="confetti"
-    id="confetti"
-  ></div>
-
-</div>
-
-
-<script>
-
-  /*
-   * ============================================================
-   * GOOGLE APPS SCRIPT URL
-   * ============================================================
-   */
-
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbyckCe1yrtVeS0PJbkUWg8JgelkKxgzECslmJ6xZ6Th66V-1aVOx2OCulWDWeh8fG-W/exec";
-
-
-  /*
-   * ============================================================
-   * SCREEN MANAGEMENT
-   * ============================================================
-   */
-
-  const screens = [
-    "s1",
-    "s2",
-    "s3",
-    "s4",
-    "s5"
-  ];
-
-
-  function show(id) {
-
-    screens.forEach((screenId) => {
-
-      document
-        .getElementById(screenId)
-        .classList
-        .toggle(
-          "active",
-          screenId === id
-        );
-
-    });
-
-  }
-
-
-  /*
-   * ============================================================
-   * MODAL
-   * ============================================================
-   */
-
-  function showMessageModal(
-    title,
-    message,
-    icon = "😅",
-    eyebrow = "NOTICE"
-  ) {
-
-    document
-      .getElementById("messageModalIcon")
-      .textContent = icon;
-
-
-    document
-      .getElementById("messageModalEyebrow")
-      .textContent = eyebrow;
-
-
-    document
-      .getElementById("messageModalTitle")
-      .textContent = title;
-
-
-    document
-      .getElementById("messageModalText")
-      .innerHTML = message;
-
-
-    const modal =
-      document.getElementById(
-        "messageModal"
-      );
-
-
-    modal.classList.add("show");
-
-    modal.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-  }
-
-
-  function closeMessageModal() {
-
-    const modal =
-      document.getElementById(
-        "messageModal"
-      );
-
-
-    modal.classList.remove("show");
-
-    modal.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-  }
-
-
-  document
-    .getElementById("messageModalBtn")
-    .addEventListener(
-      "click",
-      closeMessageModal
-    );
-
-
-  document
-    .getElementById("messageModal")
-    .addEventListener(
-      "click",
-      function(event) {
-
-        if (
-          event.target.id ===
-          "messageModal"
-        ) {
-
-          closeMessageModal();
-
+      .present .body {
+        position: absolute;
+        left: 11px;
+        bottom: 0;
+        width: 88px;
+        height: 69px;
+        border-radius: 5px 5px 11px 11px;
+        background: var(--box);
+        box-shadow:
+          inset 6px 0 9px #fff2,
+          inset -8px -7px 13px #0002;
+      }
+      .present .body:after {
+        content: "";
+        position: absolute;
+        left: 37px;
+        width: 15px;
+        height: 69px;
+        background: var(--ribbon);
+      }
+      .present .lid {
+        position: absolute;
+        left: 4px;
+        top: 26px;
+        width: 102px;
+        height: 24px;
+        border-radius: 6px;
+        background: var(--lid);
+        z-index: 2;
+        box-shadow: 0 5px 8px #0002;
+        transition: 0.5s;
+      }
+      .present .lid:after {
+        content: "";
+        position: absolute;
+        left: 43px;
+        width: 15px;
+        height: 24px;
+        background: var(--ribbon);
+      }
+      .present .bow:before,
+      .present .bow:after {
+        content: "";
+        position: absolute;
+        top: 10px;
+        width: 30px;
+        height: 21px;
+        border: 7px solid var(--ribbon);
+        border-radius: 50%;
+        z-index: 4;
+      }
+      .present .bow:before {
+        left: 30px;
+        transform: rotate(-22deg);
+      }
+      .present .bow:after {
+        left: 49px;
+        transform: rotate(22deg);
+      }
+      .tag {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        font-size: 10px;
+        font-weight: 950;
+        letter-spacing: 1px;
+      }
+      .speech {
+        position: absolute;
+        z-index: 20;
+        top: -2px;
+        left: 50%;
+        transform: translateX(-50%) scale(0.72);
+        opacity: 0;
+        white-space: nowrap;
+        min-width: 112px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        background: #181616;
+        color: #fff;
+        border: 2px solid #fff;
+        font-size: 13px;
+        line-height: 1;
+        font-weight: 950;
+        letter-spacing: 0.35px;
+        text-align: center;
+        box-shadow: 0 8px 18px #0003;
+        pointer-events: none;
+      }
+      .speech:after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -8px;
+        width: 14px;
+        height: 14px;
+        background: #181616;
+        border-right: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: translateX(-50%) rotate(45deg);
+      }
+      .boxBtn:nth-child(1) .speech {
+        animation: speechShow 8s infinite 0s;
+      }
+      .boxBtn:nth-child(2) .speech {
+        animation: speechShow 8s infinite 2s;
+      }
+      .boxBtn:nth-child(3) .speech {
+        animation: speechShow 8s infinite 4s;
+      }
+      .boxBtn:nth-child(4) .speech {
+        animation: speechShow 8s infinite 6s;
+      }
+      @keyframes speechShow {
+        0%,
+        76%,
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(8px) scale(0.72);
         }
-
+        79% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0) scale(1.12);
+        }
+        84% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(-2px) scale(1);
+        }
+        92% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-7px) scale(0.94);
+        }
       }
-    );
 
+      .boxBtn:nth-child(1) {
+        --box: #c72546;
+        --ribbon: #f0c35e;
+        --lid: #a81731;
+      }
+      .boxBtn:nth-child(2) {
+        --box: #dfa72b;
+        --ribbon: #fff0b2;
+        --lid: #bd821b;
+      }
+      .boxBtn:nth-child(3) {
+        --box: #304b80;
+        --ribbon: #e0bc59;
+        --lid: #1d315e;
+      }
+      .boxBtn:nth-child(4) {
+        --box: #4d8d69;
+        --ribbon: #f1d27c;
+        --lid: #347354;
+      }
 
-  /*
-   * ============================================================
-   * VARIABLES
-   * ============================================================
-   */
+      @media (max-width: 350px) {
+        .speech {
+          font-size: 11px;
+          min-width: 100px;
+          padding: 9px 10px;
+        }
+        .boxBtn.selected .speech {
+          font-size: 13px;
+          min-width: 128px;
+        }
+      }
+      /* Each box tries to attract attention */
+      .boxBtn {
+        animation: boxIdle 2.8s ease-in-out infinite;
+      }
+      .boxBtn:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .boxBtn:nth-child(2) {
+        animation-delay: 0.7s;
+      }
+      .boxBtn:nth-child(3) {
+        animation-delay: 1.4s;
+      }
+      .boxBtn:nth-child(4) {
+        animation-delay: 2.1s;
+      }
+      @keyframes boxIdle {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        45% {
+          transform: translateY(-5px);
+        }
+        55% {
+          transform: translateY(-2px);
+        }
+      }
+      .boxBtn:nth-child(1) .speech {
+        animation: speechShow 8s infinite 0s;
+      }
+      .boxBtn:nth-child(2) .speech {
+        animation: speechShow 8s infinite 2s;
+      }
+      .boxBtn:nth-child(3) .speech {
+        animation: speechShow 8s infinite 4s;
+      }
+      .boxBtn:nth-child(4) .speech {
+        animation: speechShow 8s infinite 6s;
+      }
+      @keyframes speechShow {
+        0%,
+        78%,
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) scale(0.7);
+        }
+        81% {
+          opacity: 1;
+          transform: translateX(-50%) scale(1.08) rotate(-2deg);
+        }
+        87% {
+          opacity: 1;
+          transform: translateX(-50%) scale(1) rotate(1deg);
+        }
+        93% {
+          opacity: 0;
+          transform: translateX(-50%) scale(0.9);
+        }
+      }
 
-  let playerName = "";
+      .boxBtn:hover .present {
+        transform: translateX(-50%) translateY(-8px) rotate(-2deg);
+      }
+      .boxBtn:active .present {
+        transform: translateX(-50%) scale(0.93);
+      }
 
-  let playerMobile = "";
+      .choiceFooter {
+        font-size: 11px;
+        color: #999;
+        text-align: center;
+        margin-top: 12px;
+      }
+      .luckyNote {
+        font-size: 12px;
+        font-weight: 800;
+        margin-top: 7px;
+        color: #a71935;
+      }
 
-  let customerType = "";
+      /* selected comedy */
+      .boxBtn.selected {
+        animation: selectedWinner 0.9s cubic-bezier(0.15, 1.5, 0.3, 1) forwards !important;
+        z-index: 10;
+      }
+      @keyframes selectedWinner {
+        0% {
+          transform: scale(1);
+        }
+        25% {
+          transform: scale(1.12) translateY(-10px) rotate(-3deg);
+        }
+        45% {
+          transform: scale(1.08) translateY(-6px) rotate(3deg);
+        }
+        65% {
+          transform: scale(1.14) translateY(-11px) rotate(-2deg);
+        }
+        100% {
+          transform: scale(1.08) translateY(-7px);
+        }
+      }
+      .boxBtn.selected .present {
+        animation: chosenShake 0.55s ease;
+      }
+      @keyframes chosenShake {
+        0%,
+        100% {
+          transform: translateX(-50%);
+        }
+        20% {
+          transform: translateX(-50%) rotate(-7deg);
+        }
+        40% {
+          transform: translateX(-50%) rotate(7deg);
+        }
+        60% {
+          transform: translateX(-50%) rotate(-4deg);
+        }
+        80% {
+          transform: translateX(-50%) rotate(2deg);
+        }
+      }
+      .boxBtn.selected .speech {
+        opacity: 1;
+        animation: none;
+        transform: translateX(-50%) translateY(-3px) scale(1.18);
+        background: #a71935;
+        color: #fff;
+        border: 2px solid #fff;
+        min-width: 145px;
+        padding: 12px 16px;
+        font-size: 15px;
+        box-shadow: 0 10px 24px #0004;
+      }
+      .boxBtn.selected .speech:after {
+        content: "YOU GOT ME! 😎";
+      }
+      .boxBtn.selected .tag {
+        color: #a71935;
+      }
 
-  let purchaseValue = "";
+      /* suspense screen */
+      .suspenseBox {
+        width: 100%;
+        max-width: 350px;
+        text-align: center;
+        margin-top: 39px;
+      }
+      .bigChosen {
+        position: relative;
+        width: 190px;
+        height: 185px;
+        margin: auto;
+      }
+      .bigChosen .present {
+        transform: translateX(-50%) scale(1.35);
+        top: 37px;
+      }
+      .suspenseText {
+        font-size: 18px;
+        font-weight: 950;
+        margin-top: 10px;
+        min-height: 28px;
+      }
+      .count {
+        font-size: 58px;
+        font-weight: 950;
+        color: #a71935;
+        line-height: 1;
+        margin: 13px 0;
+      }
+      .thinking {
+        font-size: 12px;
+        color: #777;
+      }
+      .suspenseBox.shake .present {
+        animation: suspenseShake 0.16s infinite;
+      }
+      @keyframes suspenseShake {
+        0% {
+          transform: translateX(-50%) rotate(-2deg);
+        }
+        50% {
+          transform: translateX(-50%) rotate(2deg);
+        }
+        100% {
+          transform: translateX(-50%) rotate(-2deg);
+        }
+      }
+      .suspenseBox.open .lid {
+        transform: translateY(-62px) rotate(-8deg);
+      }
+      .suspenseBox.open .present {
+        animation: openPop 0.65s ease;
+      }
+      @keyframes openPop {
+        45% {
+          transform: translateX(-50%) scale(1.48);
+        }
+      }
+      .light {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 180px;
+        height: 180px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: #f1c95d33;
+        filter: blur(10px);
+        opacity: 0;
+      }
+      .suspenseBox.open .light {
+        opacity: 1;
+        animation: lightPulse 0.8s infinite alternate;
+      }
+      @keyframes lightPulse {
+        to {
+          transform: translateX(-50%) scale(1.15);
+          opacity: 0.75;
+        }
+      }
 
-  let purchaseToken = "";
+      /* reward */
+      .loseReward {
+        display: none;
+      }
+      .loseSticker {
+        display: inline-block;
+        margin: 24px auto 5px;
+        padding: 11px 15px;
+        border-radius: 999px;
+        background: #f8eee3;
+        color: #9a6949;
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 1px;
+      }
+      .reward {
+        width: 100%;
+        max-width: 350px;
+        background: #fff;
+        border: 1px solid #eee3d8;
+        border-radius: 28px;
+        padding: 27px 18px;
+        text-align: center;
+        margin-top: 34px;
+        box-shadow: 0 22px 60px #0002;
+      }
+      .rewardEmoji {
+        font-size: 52px;
+        animation: pop 0.65s cubic-bezier(0.2, 1.5, 0.3, 1);
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0.1);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      .discount {
+        font-size: 72px;
+        line-height: 1;
+        font-weight: 950;
+        letter-spacing: -5px;
+        color: #a71935;
+        margin-top: 12px;
+      }
+      .off {
+        font-size: 17px;
+        font-weight: 950;
+        letter-spacing: 3px;
+      }
+      .coupon {
+        margin: 21px auto 8px;
+        max-width: 245px;
+        padding: 13px;
+        border: 1px dashed #c9baa7;
+        border-radius: 12px;
+        background: #f8f1e8;
+        font-weight: 950;
+        letter-spacing: 2px;
+      }
+      .confetti {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .confetti i {
+        position: absolute;
+        top: -15px;
+        width: 7px;
+        height: 12px;
+        animation: fall 1.8s linear forwards;
+      }
+      @keyframes fall {
+        to {
+          transform: translateY(720px) rotate(900deg);
+          opacity: 0.1;
+        }
+      }
 
-  let chosen = 1;
+      /* CUSTOM MESSAGE MODAL */
 
-  let opening = false;
+      .messageModal {
+        position: absolute;
+        inset: 0;
+        z-index: 1000;
 
-  let apiBusy = false;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-  let gameResult = null;
+        padding: 22px;
 
-  let suspenseTimer = null;
+        background: rgba(23, 21, 21, 0.48);
+        backdrop-filter: blur(4px);
 
+        opacity: 0;
+        pointer-events: none;
 
-  /*
-   * ============================================================
-   * START
-   * ============================================================
-   */
+        transition: opacity 0.25s ease;
+      }
 
-  document
-    .getElementById("startBtn")
-    .addEventListener(
-      "click",
-      () => {
+      .messageModal.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
 
+      .messageModalCard {
+        width: 100%;
+        max-width: 340px;
+
+        background: #fff;
+
+        border: 1px solid #eee3d8;
+        border-radius: 24px;
+
+        padding: 26px 20px 20px;
+
+        text-align: center;
+
+        box-shadow: 0 24px 70px #0003;
+
+        transform: translateY(12px) scale(0.96);
+
+        transition: transform 0.3s cubic-bezier(0.2, 1.4, 0.3, 1);
+      }
+
+      .messageModal.show .messageModalCard {
+        transform: translateY(0) scale(1);
+      }
+
+      .messageModalIcon {
+        width: 58px;
+        height: 58px;
+
+        margin: 0 auto 13px;
+
+        border-radius: 18px;
+
+        display: grid;
+        place-items: center;
+
+        background: #f8eee3;
+
+        font-size: 29px;
+      }
+
+      .messageModalEyebrow {
+        margin-top: 0;
+
+        font-size: 10px;
+        font-weight: 950;
+
+        letter-spacing: 2px;
+
+        color: #a71935;
+
+        text-transform: uppercase;
+      }
+
+      .messageModalTitle {
+        margin: 8px 0;
+
+        font-size: 23px;
+
+        line-height: 1.08;
+
+        font-weight: 950;
+
+        letter-spacing: -0.7px;
+      }
+
+      .messageModalText {
+        color: #777;
+
+        font-size: 12px;
+
+        line-height: 1.55;
+
+        margin: 0 auto 18px;
+
+        max-width: 270px;
+      }
+
+      .messageModalBtn {
+        width: 100%;
+
+        border: 0;
+        border-radius: 14px;
+
+        padding: 14px;
+
+        background: #a71935;
+
+        color: #fff;
+
+        font-size: 13px;
+
+        font-weight: 950;
+
+        letter-spacing: 0.5px;
+
+        box-shadow: 0 10px 22px #a7193530;
+
+        cursor: pointer;
+      }
+
+      .messageModalBtn:active {
+        transform: scale(0.98);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="messageModal" id="messageModal" aria-hidden="true">
+        <div class="messageModalCard" role="dialog" aria-modal="true">
+          <div class="messageModalIcon" id="messageModalIcon">😅</div>
+
+          <div class="messageModalEyebrow" id="messageModalEyebrow">
+            ALREADY PLAYED
+          </div>
+
+          <div class="messageModalTitle" id="messageModalTitle">
+            You've already played! 👀
+          </div>
+
+          <div class="messageModalText" id="messageModalText">
+            Your chance has already been used.<br />
+            Better luck next time! 🍀
+          </div>
+
+          <button class="messageModalBtn" id="messageModalBtn" type="button">
+            OKAY, GOT IT ❤️
+          </button>
+        </div>
+      </div>
+      <section class="screen active" id="s1">
+        <div class="logo">K</div>
+        <div class="brand">KRIDAY'S LIFESTYLE</div>
+        <div class="hero">
+          <div class="body"></div>
+          <div class="lid"></div>
+        </div>
+        <div class="eyebrow">SCAN • PLAY • WIN</div>
+        <h1>🎁 Let's Play<br />for a Surprise!</h1>
+        <div class="sub">
+          Pick a lucky box. It might have a little something waiting for you.
+        </div>
+        <div class="bottom">
+          <button class="btn red" id="startBtn">LET'S PLAY 😎</button>
+        </div>
+        <div class="note">Kriday's Lifestyle</div>
+      </section>
+
+      <section class="screen" id="s2">
+        <div class="logo">K</div>
+        <div class="brand">KRIDAY'S LIFESTYLE</div>
+        <div class="eyebrow">BEFORE THE FUN 👀</div>
+        <h2>
+          Just two things.<br /><span style="color: #a71935"
+            >Your surprise is waiting! 🎁</span
+          >
+        </h2>
+        <div class="sub">Enter your name and mobile number to continue.</div>
+        <form class="card" id="form">
+          <label>Name</label
+          ><input id="name" required placeholder="Your name" />
+          <label>Mobile Number</label
+          ><input
+            id="phone"
+            required
+            maxlength="10"
+            inputmode="numeric"
+            autocomplete="tel"
+            placeholder="10-digit number"
+          />
+          <div class="privacy-note">
+            🔒 <strong>Your details are safe with us.</strong><br />We won't
+            sell or share your information. It will only be used for the
+            Kriday's Lifestyle experience and relevant marketing communication.
+          </div>
+          <button class="btn red" type="submit">SHOW ME MY SURPRISE 🎁</button>
+        </form>
+      </section>
+
+      <section class="screen" id="s3">
+        <div class="logo">K</div>
+        <div class="brand">KRIDAY'S LIFESTYLE</div>
+        <div class="eyebrow">UH-OH… TOO MANY CHOICES 😜</div>
+        <h2>Which one is lucky?</h2>
+        <div class="sub">Don't ask us. We don't know either. 😂</div>
+
+        <div class="gameTop">
+          <div class="gameMessage" id="gameMessage">
+            One of them is calling your name… 👀
+          </div>
+        </div>
+
+        <div class="boxGrid">
+          <button class="boxBtn" data-box="1">
+            <span class="speech">PICK ME! 😏</span><span class="floor"></span>
+            <div class="present">
+              <div class="lid"></div>
+              <div class="body"></div>
+              <div class="bow"></div>
+            </div>
+            <span class="tag">BOX 01</span>
+          </button>
+          <button class="boxBtn" data-box="2">
+            <span class="speech">I LOOK LUCKY! 👀</span
+            ><span class="floor"></span>
+            <div class="present">
+              <div class="lid"></div>
+              <div class="body"></div>
+              <div class="bow"></div>
+            </div>
+            <span class="tag">BOX 02</span>
+          </button>
+          <button class="boxBtn" data-box="3">
+            <span class="speech">ME ME ME! 😂</span><span class="floor"></span>
+            <div class="present">
+              <div class="lid"></div>
+              <div class="body"></div>
+              <div class="bow"></div>
+            </div>
+            <span class="tag">BOX 03</span>
+          </button>
+          <button class="boxBtn" data-box="4">
+            <span class="speech">DON'T IGNORE ME! 😎</span
+            ><span class="floor"></span>
+            <div class="present">
+              <div class="lid"></div>
+              <div class="body"></div>
+              <div class="bow"></div>
+            </div>
+            <span class="tag">BOX 04</span>
+          </button>
+        </div>
+
+        <div class="choiceFooter">Tap one. No changing your mind. 😜</div>
+        <div class="luckyNote">Your box = your surprise</div>
+      </section>
+
+      <section class="screen" id="s4">
+        <div class="logo">K</div>
+        <div class="brand">KRIDAY'S LIFESTYLE</div>
+        <div class="eyebrow">WAIT… LET'S SEE 👀</div>
+        <div class="suspenseBox" id="suspense">
+          <div class="bigChosen" id="bigChosen">
+            <div class="light"></div>
+            <div class="present">
+              <div class="lid"></div>
+              <div class="body"></div>
+              <div class="bow"></div>
+            </div>
+          </div>
+          <div class="suspenseText" id="suspenseText">You picked Box 01…</div>
+          <div class="count" id="count">3</div>
+          <div class="thinking" id="thinking">Hmm… should we open it?</div>
+        </div>
+        <div class="bottom">
+          <button class="btn" id="skipBtn">OPEN IT! 😂</button>
+        </div>
+      </section>
+
+      <section class="screen" id="s5">
+        <div class="logo">K</div>
+        <div class="brand">KRIDAY'S LIFESTYLE</div>
+
+        <div class="reward" id="winReward">
+          <div class="rewardEmoji">🎉</div>
+          <div class="eyebrow">LUCKY YOU!</div>
+          <div class="discount" id="discount">17%</div>
+          <div class="off">OFF</div>
+          <div class="sub" style="margin: 10px auto 0">
+            Your mystery box had a little something waiting for you. 😎
+          </div>
+          <div class="coupon" id="coupon">KRIDAY17X</div>
+          <div class="note">
+            Show this screen to the Kriday's Lifestyle team at the stall.
+          </div>
+        </div>
+
+        <div class="reward loseReward" id="loseReward">
+          <div class="rewardEmoji">😅</div>
+          <div class="eyebrow">OOPS… SO CLOSE!</div>
+          <h2 style="margin: 10px 0 7px">Better luck next time, buddy! 🍀</h2>
+          <div class="sub" style="margin: 0 auto">
+            This time the surprise wasn't yours — but thanks for playing with
+            us! ❤️
+          </div>
+          <div class="loseSticker">MAYBE NEXT TIME 👀</div>
+          <div class="note">Thanks for playing with Kriday's Lifestyle.</div>
+        </div>
+
+        <div class="bottom">
+          <button class="btn red" onclick="location.reload()">DONE ❤️</button>
+        </div>
+      </section>
+
+      <div class="confetti" id="confetti"></div>
+    </div>
+
+    <script>
+      const API_URL =
+        "https://script.google.com/macros/s/AKfycbyckCe1yrtVeS0PJbkUWg8JgelkKxgzECslmJ6xZ6Th66V-1aVOx2OCulWDWeh8fG-W/exec";
+
+      const screens = ["s1", "s2", "s3", "s4", "s5"];
+      function show(id) {
+        screens.forEach((x) =>
+          document.getElementById(x).classList.toggle("active", x === id),
+        );
+      }
+
+      /* =================================
+   CUSTOM MESSAGE MODAL
+================================= */
+
+      function showMessageModal(
+        title,
+        message,
+        icon = "😅",
+        eyebrow = "ALREADY PLAYED",
+      ) {
+        document.getElementById("messageModalIcon").textContent = icon;
+
+        document.getElementById("messageModalEyebrow").textContent = eyebrow;
+
+        document.getElementById("messageModalTitle").textContent = title;
+
+        document.getElementById("messageModalText").innerHTML = message;
+
+        const modal = document.getElementById("messageModal");
+
+        modal.classList.add("show");
+
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeMessageModal() {
+        const modal = document.getElementById("messageModal");
+
+        modal.classList.remove("show");
+
+        modal.setAttribute("aria-hidden", "true");
+      }
+
+      /* Close button */
+
+      const messageModalBtn = document.getElementById("messageModalBtn");
+
+      if (messageModalBtn) {
+        messageModalBtn.addEventListener("click", closeMessageModal);
+      }
+
+      /* Close when clicking outside the card */
+
+      const messageModal = document.getElementById("messageModal");
+
+      if (messageModal) {
+        messageModal.addEventListener("click", function (event) {
+          if (event.target.id === "messageModal") {
+            closeMessageModal();
+          }
+        });
+      }
+
+      document.getElementById("startBtn").addEventListener("click", () => {
         show("s2");
+      });
 
+      let playerName = "";
+      let playerMobile = "";
+      let chosen = 1;
+      let opening = false;
+      let gameResult = null;
+      let suspenseTimer = null;
+      let apiBusy = false;
+
+      function normalizeMobile(value) {
+        return String(value || "")
+          .replace(/\D/g, "")
+          .slice(-10);
       }
-    );
 
-
-  /*
-   * ============================================================
-   * CUSTOMER TYPE
-   * ============================================================
-   */
-
-  const customerTypeSelect =
-    document.getElementById(
-      "customerType"
-    );
-
-
-  const purchaseFields =
-    document.getElementById(
-      "purchaseFields"
-    );
-
-
-  customerTypeSelect
-    .addEventListener(
-      "change",
-      function() {
-
-        const value =
-          this.value;
-
-
-        if (
-          value === "PURCHASED"
-        ) {
-
-          purchaseFields
-            .classList
-            .add("show");
-
-        } else {
-
-          purchaseFields
-            .classList
-            .remove("show");
-
-
-          document
-            .getElementById(
-              "purchaseValue"
-            )
-            .value = "";
-
-
-          document
-            .getElementById(
-              "purchaseToken"
-            )
-            .value = "";
-
+      // Keep API calls from hanging forever. The stall experience should never
+      // leave a customer stuck on CHECKING... for more than a few seconds.
+      async function callAPI(payload, timeoutMs = 8000) {
+        if (!API_URL || API_URL.includes("PASTE_YOUR_WEB_APP_EXEC_URL_HERE")) {
+          throw new Error("API URL has not been added yet.");
         }
 
-      }
-    );
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-
-  /*
-   * ============================================================
-   * MOBILE NORMALIZATION
-   * ============================================================
-   */
-
-  function normalizeMobile(value) {
-
-    return String(value || "")
-      .replace(/\D/g, "")
-      .slice(-10);
-
-  }
-
-
-  /*
-   * ============================================================
-   * API CALL
-   * ============================================================
-   */
-
-  async function callAPI(
-    payload,
-    timeoutMs = 8000
-  ) {
-
-    if (
-      !API_URL ||
-      API_URL.includes(
-        "PASTE_YOUR_WEB_APP"
-      )
-    ) {
-
-      throw new Error(
-        "API URL has not been configured."
-      );
-
-    }
-
-
-    const controller =
-      new AbortController();
-
-
-    const timeoutId =
-      setTimeout(
-        () => {
-          controller.abort();
-        },
-        timeoutMs
-      );
-
-
-    try {
-
-      const response =
-        await fetch(
-          API_URL,
-          {
+        try {
+          const response = await fetch(API_URL, {
             method: "POST",
-
             headers: {
-              "Content-Type":
-                "text/plain;charset=utf-8"
+              "Content-Type": "text/plain;charset=utf-8",
             },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
 
-            body:
-              JSON.stringify(
-                payload
-              ),
-
-            signal:
-              controller.signal
+          if (!response.ok) {
+            throw new Error("API request failed (" + response.status + ")");
           }
-        );
 
-
-      if (
-        !response.ok
-      ) {
-
-        throw new Error(
-          "API request failed: " +
-          response.status
-        );
-
+          return await response.json();
+        } catch (error) {
+          if (error.name === "AbortError") {
+            throw new Error("The game server took too long to respond.");
+          }
+          throw error;
+        } finally {
+          clearTimeout(timeoutId);
+        }
       }
 
+      // Warm up Google Apps Script in the background while the customer is
+      // reading the first screen. This can reduce cold-start delay on the
+      // first real CHECK request. It does not affect game data.
+      function warmUpAPI() {
+        if (!API_URL || API_URL.includes("PASTE_YOUR_WEB_APP_EXEC_URL_HERE")) return;
 
-      return await response.json();
-
-
-    } catch (error) {
-
-      if (
-        error.name ===
-        "AbortError"
-      ) {
-
-        throw new Error(
-          "The game server took too long to respond."
-        );
-
+        fetch(API_URL, {
+          method: "GET",
+          cache: "no-store",
+        }).catch(() => {
+          // Warm-up is optional; the real API call will handle errors normally.
+        });
       }
 
+      warmUpAPI();
 
-      throw error;
-
-
-    } finally {
-
-      clearTimeout(
-        timeoutId
-      );
-
-    }
-
-  }
-
-
-  /*
-   * ============================================================
-   * API WARM UP
-   * ============================================================
-   */
-
-  function warmUpAPI() {
-
-    if (
-      !API_URL ||
-      API_URL.includes(
-        "PASTE_YOUR_WEB_APP"
-      )
-    ) {
-
-      return;
-
-    }
-
-
-    fetch(
-      API_URL,
-      {
-        method: "GET",
-        cache: "no-store"
+      async function checkMobile(mobile) {
+        return await callAPI({
+          action: "check",
+          mobile: mobile,
+        }, 8000);
       }
-    ).catch(
-      () => {}
-    );
 
-  }
-
-
-  warmUpAPI();
-
-
-  /*
-   * ============================================================
-   * RESET BOX UI
-   * ============================================================
-   */
-
-  function resetBoxes() {
-
-    document
-      .querySelectorAll(".boxBtn")
-      .forEach(
-        (box) => {
-
-          box.classList.remove(
-            "selected"
-          );
-
-          box.style.pointerEvents =
-            "";
-
-          box.style.opacity =
-            "";
-
-          box.style.filter =
-            "";
-
-          const discount =
-            box.querySelector(
-              ".boxDiscount"
-            );
-
-          if (discount) {
-
-            discount.textContent =
-              "";
-
-          }
-
-        }
-      );
-
-
-    document
-      .getElementById("boxGrid")
-      .classList.remove(
-        "boxesReady",
-        "visitorMode"
-      );
-
-  }
-
-
-  /*
-   * ============================================================
-   * DISPLAY BOX INFORMATION
-   * ============================================================
-   */
-
-  function prepareBoxes(
-    result
-  ) {
-
-    resetBoxes();
-
-
-    const boxes =
-      result.boxes || [];
-
-
-    document
-      .querySelectorAll(".boxBtn")
-      .forEach(
-        (btn, index) => {
-
-          const boxData =
-            boxes[index];
-
-
-          if (!boxData) {
-            return;
-          }
-
-
-          const discountElement =
-            btn.querySelector(
-              ".boxDiscount"
-            );
-
-
-          const loseElement =
-            btn.querySelector(
-              ".visitorLoseLabel"
-            );
-
-
-          if (
-            result.customerType ===
-            "Visitor"
-          ) {
-
-            if (
-              boxData.isWinner
-            ) {
-
-              discountElement
-                .textContent =
-                boxData.discount +
-                "% OFF";
-
-              loseElement.style
-                .display =
-                "none";
-
-            } else {
-
-              discountElement
-                .textContent =
-                "";
-
-              loseElement.style
-                .display =
-                "block";
-
-            }
-
-          } else {
-
-            discountElement
-              .textContent =
-              boxData.discount +
-              "% OFF";
-
-            loseElement.style
-              .display =
-              "none";
-
-          }
-
-        }
-      );
-
-
-    const grid =
-      document.getElementById(
-        "boxGrid"
-      );
-
-
-    grid.classList.add(
-      "boxesReady"
-    );
-
-
-    if (
-      result.customerType ===
-      "Visitor"
-    ) {
-
-      grid.classList.add(
-        "visitorMode"
-      );
-
-    }
-
-
-    if (
-      result.customerType ===
-      "Visitor"
-    ) {
-
-      document
-        .getElementById(
-          "gameEyebrow"
-        )
-        .textContent =
-        "VISITOR SURPRISE 👀";
-
-
-      document
-        .getElementById(
-          "gameSub"
-        )
-        .textContent =
-        "One box has a little surprise. Choose wisely! 😎";
-
-
-      document
-        .getElementById(
-          "luckyNote"
-        )
-        .textContent =
-        "1 lucky box • 3 better luck boxes";
-
-    } else {
-
-      document
-        .getElementById(
-          "gameEyebrow"
-        )
-        .textContent =
-        "YOUR PURCHASE SURPRISE 🎁";
-
-
-      document
-        .getElementById(
-          "gameSub"
-        )
-        .textContent =
-        "Every box has a discount. Pick your favourite! 😎";
-
-
-      document
-        .getElementById(
-          "luckyNote"
-        )
-        .textContent =
-        "Your box = your discount";
-
-    }
-
-  }
-
-
-  /*
-   * ============================================================
-   * FORM SUBMIT
-   * ============================================================
-   */
-
-  document
-    .getElementById("form")
-    .addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-
-        if (apiBusy) {
+      async function submitGameResult(selectedBox) {
+        return await callAPI({
+          action: "play",
+          name: playerName,
+          mobile: playerMobile,
+          selectedBox: selectedBox,
+        }, 8000);
+      }
+
+      function showFormError(message) {
+        alert(message);
+      }
+
+      /* Name + mobile form */
+      document.getElementById("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (apiBusy) return;
+
+        const n = document.getElementById("name").value.trim();
+        const p = normalizeMobile(document.getElementById("phone").value);
+
+        if (!n) {
+          showFormError("Please enter your name.");
           return;
         }
 
-
-        const name =
-          document
-            .getElementById("name")
-            .value
-            .trim();
-
-
-        const mobile =
-          normalizeMobile(
-            document
-              .getElementById("phone")
-              .value
-          );
-
-
-        const type =
-          document
-            .getElementById(
-              "customerType"
-            )
-            .value;
-
-
-        if (!name) {
-
-          showMessageModal(
-            "What's your name? 😊",
-            "Please enter your name to continue.",
-            "👋",
-            "ONE LITTLE THING"
-          );
-
+        if (!/^[6-9][0-9]{9}$/.test(p)) {
+          showFormError("Please enter a valid 10-digit mobile number.");
           return;
-
         }
-
-
-        if (
-          !/^[6-9][0-9]{9}$/
-            .test(mobile)
-        ) {
-
-          showMessageModal(
-            "Check your number 📱",
-            "Please enter a valid 10-digit mobile number.",
-            "📱",
-            "ALMOST THERE"
-          );
-
-          return;
-
-        }
-
-
-        if (!type) {
-
-          showMessageModal(
-            "One more thing! 👀",
-            "Please select whether you're a Visitor or Purchased customer.",
-            "😎",
-            "SELECT YOUR TYPE"
-          );
-
-          return;
-
-        }
-
-
-        let amount = "";
-
-        let token = "";
-
-
-        if (
-          type === "PURCHASED"
-        ) {
-
-          amount =
-            Number(
-              document
-                .getElementById(
-                  "purchaseValue"
-                )
-                .value
-            );
-
-
-          token =
-            document
-              .getElementById(
-                "purchaseToken"
-              )
-              .value
-              .trim()
-              .toUpperCase();
-
-
-          if (
-            !amount ||
-            amount <= 0
-          ) {
-
-            showMessageModal(
-              "Enter your purchase value 🧾",
-              "Please enter the amount you purchased for.",
-              "🧾",
-              "PURCHASE DETAILS"
-            );
-
-            return;
-
-          }
-
-
-          if (!token) {
-
-            showMessageModal(
-              "Enter your token 🎟️",
-              "Please enter the purchase token given to you at the stall.",
-              "🎟️",
-              "PURCHASE DETAILS"
-            );
-
-            return;
-
-          }
-
-        }
-
 
         apiBusy = true;
 
-
-        const button =
-          document.getElementById(
-            "submitButton"
-          );
-
-
-        const originalText =
-          button.textContent;
-
-
-        button.disabled =
-          true;
-
-
-        button.textContent =
-          "CHECKING… 👀";
-
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = "CHECKING… 👀";
 
         try {
+          const result = await checkMobile(p);
 
-          /*
-           * FIRST:
-           * Check mobile.
-           */
-
-          const mobileResult =
-            await callAPI(
-              {
-                action: "check",
-                mobile: mobile
-              },
-              8000
+          if (!result.success) {
+            showFormError(
+              result.message || "Something went wrong. Please try again.",
             );
-
-
-          if (
-            !mobileResult.success
-          ) {
-
-            throw new Error(
-              mobileResult.message ||
-              "Unable to check mobile."
-            );
-
+            return;
           }
 
-
-          if (
-            mobileResult.exists
-          ) {
-
+          if (result.exists) {
             showMessageModal(
-              "Hey Buddy! 😅",
-              "Your chance has already been used.<br>Better luck next time! 🍀",
+              "Hey Buddy!",
+              "Your chance has already been used.<br>" +
+                "Better luck next time! 🍀",
               "😅",
-              "ALREADY PLAYED"
+              "ALREADY PLAYED",
             );
 
             return;
-
           }
 
+          playerName = n;
+          playerMobile = p;
 
-          /*
-           * SECOND:
-           * Validate purchase if needed.
-           */
+          gameResult = null;
+          chosen = 1;
+          opening = false;
 
-          if (
-            type === "PURCHASED"
-          ) {
-
-            button.textContent =
-              "VERIFYING PURCHASE… 🔎";
-
-
-            const purchaseResult =
-              await callAPI(
-                {
-                  action:
-                    "validatePurchase",
-
-                  mobile:
-                    mobile,
-
-                  purchaseValue:
-                    amount,
-
-                  token:
-                    token
-                },
-                8000
-              );
-
-
-            if (
-              !purchaseResult.success
-            ) {
-
-              if (
-                purchaseResult.tokenUsed
-              ) {
-
-                showMessageModal(
-                  "Token already used! 🎟️",
-                  "This purchase token has already been used.<br>Please check with the Kriday's Lifestyle team.",
-                  "🎟️",
-                  "TOKEN USED"
-                );
-
-              } else {
-
-                showMessageModal(
-                  "Please check your details 👀",
-                  purchaseResult.message ||
-                  "The purchase details could not be verified.",
-                  "⚠️",
-                  "VERIFICATION FAILED"
-                );
-
-              }
-
-              return;
-
-            }
-
-          }
-
-
-          /*
-           * Save player information.
-           */
-
-          playerName =
-            name;
-
-          playerMobile =
-            mobile;
-
-          customerType =
-            type;
-
-          purchaseValue =
-            amount;
-
-          purchaseToken =
-            token;
-
-
-          /*
-           * We need the server to generate
-           * the boxes BEFORE the customer chooses.
-           *
-           * We call a play-preview action.
-           */
-
-          button.textContent =
-            "PREPARING YOUR BOXES… 🎁";
-
-
-          const previewResult =
-            await callAPI(
-              {
-                action:
-                  "prepare",
-
-                name:
-                  playerName,
-
-                mobile:
-                  playerMobile,
-
-                customerType:
-                  customerType,
-
-                purchaseValue:
-                  purchaseValue,
-
-                token:
-                  purchaseToken
-              },
-              8000
-            );
-
-
-          if (
-            !previewResult.success
-          ) {
-
-            showMessageModal(
-              "Almost there! 👀",
-              previewResult.message ||
-              "We couldn't prepare your surprise. Please try again.",
-              "😅",
-              "ONE MORE TRY"
-            );
-
-            return;
-
-          }
-
-
-          gameResult =
-            previewResult;
-
-
-          chosen =
-            1;
-
-          opening =
-            false;
-
-
-          prepareBoxes(
-            gameResult
-          );
-
+          document.querySelectorAll(".boxBtn").forEach((b) => {
+            b.classList.remove("selected");
+            b.style.pointerEvents = "";
+            b.style.opacity = "";
+            b.style.filter = "";
+          });
 
           show("s3");
-
-
         } catch (error) {
-
-          console.error(
-            "Game API error:",
-            error
+          console.error(error);
+          showFormError(
+            "We couldn't connect to the game server right now.\n\n" +
+              "Please try again.",
           );
-
-
-          showMessageModal(
-            "Let's try that again 😅",
-            "We couldn't connect to the game server right now.<br>Please try again.",
-            "📡",
-            "CONNECTION ISSUE"
-          );
-
-
         } finally {
-
-          apiBusy =
-            false;
-
-
-          button.disabled =
-            false;
-
-
-          button.textContent =
-            originalText;
-
+          apiBusy = false;
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
         }
+      });
 
-      }
-    );
+      /* Box selection */
+      document.querySelectorAll(".boxBtn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (opening || apiBusy) return;
 
+          opening = true;
+          chosen = Number(btn.dataset.box);
+          apiBusy = true;
 
-  /*
-   * ============================================================
-   * BOX SELECTION
-   * ============================================================
-   */
+          const gameMessage = document.getElementById("gameMessage");
 
-  document
-    .querySelectorAll(".boxBtn")
-    .forEach(
-      (btn) => {
+          gameMessage.textContent = "OH! You picked that one! 😂";
+          gameMessage.classList.remove("pop");
+          void gameMessage.offsetWidth;
+          gameMessage.classList.add("pop");
 
-        btn.addEventListener(
-          "click",
-          async function() {
+          btn.classList.add("selected");
 
-            if (
-              opening ||
-              apiBusy
-            ) {
-
-              return;
-
+          document.querySelectorAll(".boxBtn").forEach((b) => {
+            b.style.pointerEvents = "none";
+            if (b !== btn) {
+              b.style.opacity = ".13";
+              b.style.filter = "blur(1px)";
             }
+          });
 
+          try {
+            gameResult = await submitGameResult("Box " + chosen);
 
-            opening =
-              true;
-
-
-            chosen =
-              Number(
-                btn.dataset.box
-              );
-
-
-            apiBusy =
-              true;
-
-
-            const gameMessage =
-              document.getElementById(
-                "gameMessage"
-              );
-
-
-            gameMessage.textContent =
-              "OH! You picked that one! 😂";
-
-
-            gameMessage.classList.remove(
-              "pop"
-            );
-
-
-            void gameMessage
-              .offsetWidth;
-
-
-            gameMessage.classList.add(
-              "pop"
-            );
-
-
-            btn.classList.add(
-              "selected"
-            );
-
-
-            document
-              .querySelectorAll(
-                ".boxBtn"
-              )
-              .forEach(
-                (box) => {
-
-                  box.style.pointerEvents =
-                    "none";
-
-
-                  if (
-                    box !== btn
-                  ) {
-
-                    box.style.opacity =
-                      ".13";
-
-                    box.style.filter =
-                      "blur(1px)";
-
-                  }
-
-                }
-              );
-
-
-            try {
-
-              /*
-               * IMPORTANT:
-               *
-               * The prepare request only creates
-               * the box layout.
-               *
-               * Now the server records the actual
-               * selected box and returns the final
-               * result.
-               */
-
-              const finalResult =
-                await callAPI(
-                  {
-                    action:
-                      "play",
-
-                    name:
-                      playerName,
-
-                    mobile:
-                      playerMobile,
-
-                    customerType:
-                      customerType,
-
-                    purchaseValue:
-                      purchaseValue,
-
-                    token:
-                      purchaseToken,
-
-                    selectedBox:
-                      String(chosen)
-                  },
-                  8000
+            if (!gameResult.success) {
+              if (gameResult.duplicate) {
+                showMessageModal(
+                  "You've already played! 👀",
+                  "Your chance has already been used.<br>" +
+                    "Better luck next time! 🍀",
+                  "😅",
+                  "Hey Buddy!",
                 );
-
-
-              if (
-                !finalResult.success
-              ) {
-
-                if (
-                  finalResult.duplicate
-                ) {
-
-                  showMessageModal(
-                    "Hey Buddy! 😅",
-                    "Your chance has already been used.<br>Better luck next time! 🍀",
-                    "😅",
-                    "ALREADY PLAYED"
-                  );
-
-                } else if (
-                  finalResult.tokenUsed
-                ) {
-
-                  showMessageModal(
-                    "Token already used! 🎟️",
-                    "This purchase token has already been used.",
-                    "🎟️",
-                    "TOKEN USED"
-                  );
-
-                } else {
-
-                  showMessageModal(
-                    "Something went wrong 😅",
-                    finalResult.message ||
-                    "Please try again.",
-                    "⚠️",
-                    "SORRY"
-                  );
-
-                }
-
-
-                resetGameAfterError();
-
-                return;
-
+              } else {
+                alert(
+                  gameResult.message ||
+                    "Something went wrong. Please try again.",
+                );
               }
 
-
-              /*
-               * Replace preview result with
-               * final server result.
-               */
-
-              gameResult =
-                finalResult;
-
-
-              setTimeout(
-                function() {
-
-                  document
-                    .getElementById(
-                      "suspenseText"
-                    )
-                    .textContent =
-                    "You picked Box " +
-                    chosen +
-                    "…";
-
-
-                  show("s4");
-
-
-                  runSuspense();
-
-                },
-                850
-              );
-
-
-            } catch (error) {
-
-              console.error(
-                "Play error:",
-                error
-              );
-
-
-              showMessageModal(
-                "Let's try again 😅",
-                "We couldn't complete your play.<br>Please try again.",
-                "📡",
-                "CONNECTION ISSUE"
-              );
-
-
               resetGameAfterError();
-
-            } finally {
-
-              apiBusy =
-                false;
-
+              return;
             }
 
+            setTimeout(() => {
+              document.getElementById("suspenseText").textContent =
+                "You picked Box " + chosen + "…";
+              show("s4");
+              runSuspense();
+            }, 850);
+          } catch (error) {
+            console.error(error);
+
+            alert(
+              "We couldn't connect to the game server.\n\n" +
+                "Your play was not shown. Please try again.",
+            );
+
+            resetGameAfterError();
+          } finally {
+            apiBusy = false;
           }
-        );
-
-      }
-    );
-
-
-  /*
-   * ============================================================
-   * RESET AFTER ERROR
-   * ============================================================
-   */
-
-  function resetGameAfterError() {
-
-    opening =
-      false;
-
-
-    gameResult =
-      null;
-
-
-    resetBoxes();
-
-
-    show("s3");
-
-  }
-
-
-  /*
-   * ============================================================
-   * SUSPENSE
-   * ============================================================
-   */
-
-  function runSuspense() {
-
-    const box =
-      document.querySelector(
-        "#bigChosen .present"
-      );
-
-
-    const colors = [
-
-      [
-        "#c72546",
-        "#f0c35e",
-        "#a81731"
-      ],
-
-      [
-        "#dfa72b",
-        "#fff0b2",
-        "#bd821b"
-      ],
-
-      [
-        "#304b80",
-        "#e0bc59",
-        "#1d315e"
-      ],
-
-      [
-        "#4d8d69",
-        "#f1d27c",
-        "#347354"
-      ]
-
-    ];
-
-
-    const c =
-      colors[
-        chosen - 1
-      ];
-
-
-    box.style.setProperty(
-      "--box",
-      c[0]
-    );
-
-
-    box.style.setProperty(
-      "--ribbon",
-      c[1]
-    );
-
-
-    box.style.setProperty(
-      "--lid",
-      c[2]
-    );
-
-
-    const suspense =
-      document.getElementById(
-        "suspense"
-      );
-
-
-    const count =
-      document.getElementById(
-        "count"
-      );
-
-
-    const thinking =
-      document.getElementById(
-        "thinking"
-      );
-
-
-    const skip =
-      document.getElementById(
-        "skipBtn"
-      );
-
-
-    let n =
-      3;
-
-
-    suspense.classList.remove(
-      "open"
-    );
-
-
-    suspense.classList.add(
-      "shake"
-    );
-
-
-    count.textContent =
-      "3";
-
-
-    thinking.textContent =
-      "Hmm… should we open it? 🤔";
-
-
-    skip.textContent =
-      "OPEN IT! 😂";
-
-
-    skip.style.display =
-      "block";
-
-
-    suspenseTimer =
-      setInterval(
-        function() {
-
-          n--;
-
-
-          if (
-            n === 2
-          ) {
-
-            count.textContent =
-              "2";
-
-            thinking.textContent =
-              "Wait… this might be good. 👀";
-
-          } else if (
-            n === 1
-          ) {
-
-            count.textContent =
-              "1";
-
-            thinking.textContent =
-              "Okay okay… LAST CHANCE! 😳";
-
-          } else {
-
-            clearInterval(
-              suspenseTimer
-            );
-
-
-            count.textContent =
-              "🎁";
-
-
-            thinking.textContent =
-              "OPENING…";
-
-
-            suspense.classList.remove(
-              "shake"
-            );
-
-
-            suspense.classList.add(
-              "open"
-            );
-
-
-            skip.style.display =
-              "none";
-
-
-            setTimeout(
-              showReward,
-              900
-            );
-
-          }
-
-        },
-        650
-      );
-
-  }
-
-
-  /*
-   * ============================================================
-   * SKIP / OPEN BUTTON
-   * ============================================================
-   */
-
-  document
-    .getElementById("skipBtn")
-    .addEventListener(
-      "click",
-      function() {
-
-        if (
-          !opening ||
-          !gameResult
-        ) {
-
-          return;
-
-        }
-
-
-        clearInterval(
-          suspenseTimer
-        );
-
-
-        const suspense =
-          document.getElementById(
-            "suspense"
-          );
-
-
-        document
-          .getElementById(
-            "count"
-          )
-          .textContent =
-          "🎁";
-
-
-        document
-          .getElementById(
-            "thinking"
-          )
-          .textContent =
-          "FINE! HERE WE GO! 😂";
-
-
-        suspense.classList.remove(
-          "shake"
-        );
-
-
-        suspense.classList.add(
-          "open"
-        );
-
-
-        document
-          .getElementById(
-            "skipBtn"
-          )
-          .style.display =
-          "none";
-
-
-        setTimeout(
-          showReward,
-          750
-        );
-
-      }
-    );
-
-
-  /*
-   * ============================================================
-   * REWARD
-   * ============================================================
-   */
-
-  function showReward() {
-
-    if (
-      !gameResult ||
-      !gameResult.success
-    ) {
-
-      showMessageModal(
-        "Oops! 😅",
-        "We couldn't load your result. Please contact the Kriday's Lifestyle team.",
-        "😅",
-        "RESULT ERROR"
-      );
-
-      return;
-
-    }
-
-
-    const isWinner =
-      Boolean(
-        gameResult.isWinner ||
-        gameResult.discount
-      );
-
-
-    document
-      .getElementById(
-        "winReward"
-      )
-      .style.display =
-      isWinner
-        ? "block"
-        : "none";
-
-
-    document
-      .getElementById(
-        "loseReward"
-      )
-      .style.display =
-      isWinner
-        ? "none"
-        : "block";
-
-
-    if (
-      isWinner
-    ) {
-
-      document
-        .getElementById(
-          "discount"
-        )
-        .textContent =
-        String(
-          gameResult.discount
-        ) +
-        "%";
-
-
-      document
-        .getElementById(
-          "coupon"
-        )
-        .textContent =
-        String(
-          gameResult.couponCode
-        );
-
-
-      if (
-        gameResult.customerType ===
-        "Purchased"
-      ) {
-
-        document
-          .getElementById(
-            "resultDetail"
-          )
-          .textContent =
-          "Show this screen to the Kriday's Lifestyle team at the stall.";
-
+        });
+      });
+
+      function resetGameAfterError() {
+        opening = false;
+        gameResult = null;
+
+        document.querySelectorAll(".boxBtn").forEach((b) => {
+          b.classList.remove("selected");
+          b.style.pointerEvents = "";
+          b.style.opacity = "";
+          b.style.filter = "";
+        });
+
+        show("s3");
       }
 
+      /* Suspense */
+      function runSuspense() {
+        const box = document.querySelector("#bigChosen .present");
 
-      makeConfetti();
-
-    }
-
-
-    show("s5");
-
-  }
-
-
-  /*
-   * ============================================================
-   * DONE
-   * ============================================================
-   */
-
-  document
-    .getElementById("doneBtn")
-    .addEventListener(
-      "click",
-      function() {
-
-        location.reload();
-
-      }
-    );
-
-
-  /*
-   * ============================================================
-   * CONFETTI
-   * ============================================================
-   */
-
-  function makeConfetti() {
-
-    const container =
-      document.getElementById(
-        "confetti"
-      );
-
-
-    container.innerHTML =
-      "";
-
-
-    const colors = [
-      "#a71935",
-      "#d8a640",
-      "#171515",
-      "#2e4d80",
-      "#4d8d69"
-    ];
-
-
-    for (
-      let i = 0;
-      i < 80;
-      i++
-    ) {
-
-      const piece =
-        document.createElement(
-          "i"
-        );
-
-
-      piece.style.left =
-        Math.random() *
-        100 +
-        "%";
-
-
-      piece.style.background =
-        colors[
-          Math.floor(
-            Math.random() *
-            colors.length
-          )
+        const colors = [
+          ["#c72546", "#f0c35e", "#a81731"],
+          ["#dfa72b", "#fff0b2", "#bd821b"],
+          ["#304b80", "#e0bc59", "#1d315e"],
+          ["#4d8d69", "#f1d27c", "#347354"],
         ];
 
+        const c = colors[chosen - 1];
+        box.style.setProperty("--box", c[0]);
+        box.style.setProperty("--ribbon", c[1]);
+        box.style.setProperty("--lid", c[2]);
 
-      piece.style.animationDelay =
-        Math.random() *
-        0.5 +
-        "s";
+        const suspense = document.getElementById("suspense");
+        const count = document.getElementById("count");
+        const thinking = document.getElementById("thinking");
+        const skip = document.getElementById("skipBtn");
 
+        let n = 3;
 
-      container.appendChild(
-        piece
-      );
+        suspense.classList.remove("open");
+        suspense.classList.add("shake");
 
-    }
+        count.textContent = "3";
+        thinking.textContent = "Hmm… should we open it? 🤔";
+        skip.textContent = "OPEN IT! 😂";
+        skip.style.display = "block";
 
-  }
+        suspenseTimer = setInterval(() => {
+          n--;
 
-</script>
+          if (n === 2) {
+            count.textContent = "2";
+            thinking.textContent = "Wait… this might be good. 👀";
+          } else if (n === 1) {
+            count.textContent = "1";
+            thinking.textContent = "Okay okay… LAST CHANCE! 😳";
+          } else {
+            clearInterval(suspenseTimer);
 
-</body>
+            count.textContent = "🎁";
+            thinking.textContent = "OPENING…";
+
+            suspense.classList.remove("shake");
+            suspense.classList.add("open");
+            skip.style.display = "none";
+
+            setTimeout(showReward, 900);
+          }
+        }, 650);
+      }
+
+      document.getElementById("skipBtn").addEventListener("click", () => {
+        if (!opening || !gameResult) return;
+
+        clearInterval(suspenseTimer);
+
+        const suspense = document.getElementById("suspense");
+
+        document.getElementById("count").textContent = "🎁";
+        document.getElementById("thinking").textContent =
+          "FINE! HERE WE GO! 😂";
+
+        suspense.classList.remove("shake");
+        suspense.classList.add("open");
+
+        document.getElementById("skipBtn").style.display = "none";
+
+        setTimeout(showReward, 750);
+      });
+
+      /* Server-controlled reward reveal */
+      function showReward() {
+        if (!gameResult || !gameResult.success) {
+          alert("We couldn't load your result. Please try again.");
+          return;
+        }
+
+        const isWinner = Boolean(gameResult.isWinner);
+
+        document.getElementById("winReward").style.display = isWinner
+          ? "block"
+          : "none";
+        document.getElementById("loseReward").style.display = isWinner
+          ? "none"
+          : "block";
+
+        if (isWinner) {
+          document.getElementById("discount").textContent =
+            String(gameResult.discount) + "%";
+
+          document.getElementById("coupon").textContent = String(
+            gameResult.couponCode,
+          );
+
+          makeConfetti();
+        }
+
+        show("s5");
+      }
+
+      /* Confetti */
+       /* Confetti */
+      function makeConfetti() {
+        const c = document.getElementById("confetti");
+        c.innerHTML = "";
+
+        const colors = ["#a71935", "#d8a640", "#171515", "#2e4d80", "#4d8d69"];
+
+        for (let i = 0; i < 80; i++) {
+          const x = document.createElement("i");
+
+          x.style.left = Math.random() * 100 + "%";
+          x.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+          x.style.animationDelay = Math.random() * 0.5 + "s";
+
+          c.appendChild(x);
+        }
+      }
+    </script>
+  </body>
 </html>

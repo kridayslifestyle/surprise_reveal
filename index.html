@@ -1451,11 +1451,7 @@
        * ============================================================
        */
 
-      async function callAPI(payload, timeoutMs = 8000) {
-        if (!API_URL || API_URL.includes("PASTE_YOUR_WEB_APP")) {
-          throw new Error("API URL has not been configured.");
-        }
-
+      async function callAPI(payload, timeoutMs = 30000) {
         const controller = new AbortController();
 
         const timeoutId = setTimeout(() => {
@@ -1463,9 +1459,14 @@
         }, timeoutMs);
 
         try {
+          console.log("Sending API request:", payload);
+          console.log("API URL:", API_URL);
+
           const response = await fetch(API_URL, {
             method: "POST",
 
+            // IMPORTANT:
+            // text/plain avoids the browser's CORS preflight request
             headers: {
               "Content-Type": "text/plain;charset=utf-8",
             },
@@ -1475,12 +1476,32 @@
             signal: controller.signal,
           });
 
+          console.log("API HTTP status:", response.status);
+          console.log("API response URL:", response.url);
+
+          const text = await response.text();
+
+          console.log("Raw API response:", text);
+
           if (!response.ok) {
-            throw new Error("API request failed: " + response.status);
+            throw new Error("API request failed (" + response.status + ")");
           }
 
-          return await response.json();
+          let data;
+
+          try {
+            data = JSON.parse(text);
+          } catch (error) {
+            console.error("Invalid JSON returned by API:", text);
+            throw new Error("Invalid response received from game server.");
+          }
+
+          console.log("Parsed API response:", data);
+
+          return data;
         } catch (error) {
+          console.error("Game API error:", error);
+
           if (error.name === "AbortError") {
             throw new Error("The game server took too long to respond.");
           }
